@@ -17,6 +17,18 @@ class CircularRepository {
       return [];
     }
   }
+  Future<Circular?> getCircularById(int id) async {
+    try {
+      final response = await _dio.get('/circulares/$id');
+
+      return Circular.fromJson(response.data);
+    } catch (e) {
+      if (e is DioException) {
+        debugPrint('ERROR DETAIL: ${e.response?.data}');
+      }
+      return null;
+    }
+  }
 
   Future<bool> createCircular({
     required String titulo,

@@ -7,8 +7,7 @@ class AuthRepository {
       AuthRepository(this._dio);
  
   // LOGIN
-  Future<Users?> login(String email, String password) async {
-    try {
+  Future<Users> login(String email, String password) async {
       final response = await _dio.post(
        '/auth/login',
         data: {
@@ -18,19 +17,16 @@ class AuthRepository {
       );
 
       return Users.fromJson(response.data);
-    } catch (e) {
-      print(e);
-      return null;
-    }
+  
   }
 
   // REGISTER
- Future<Users?> register({
+ Future<Users> register({
   required String name,
   required String email,
   required String password,
 }) async {
-  try {
+  
     final response = await _dio.post(
       '/auth/register',
       data: {
@@ -42,15 +38,9 @@ class AuthRepository {
     );
 
     return Users.fromJson(response.data);
-  } catch (e) {
-  if (e is DioException) {
-    print("ERROR BACKEND: ${e.response?.data}");
-  } else {
-    print("ERROR: $e");
-  }
-  return null;
+ 
 }
-}
+
 
 Future<void> logout() async {
   try {

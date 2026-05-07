@@ -28,6 +28,10 @@ import '../../screen/director/horario_profesor_screen.dart';
 import '../../screen/horario/horario_curso_screen.dart';
 import '../../screen/circular/circular_create_screen.dart';
 import '../../screen/circular/circular_list_screen.dart';
+import '../../screen/circular/circular_detail_screen.dart';
+import '../../screen/inscripcion/inscripcion_create_screen.dart';
+import '../../screen/inscripcion/inscripcion_list_screen.dart';
+import '../../screen/profesor/mis_clases_screen.dart';
 
 // Super Admin
 import '../../screen/tenant/tenant_list_screen.dart';
@@ -236,7 +240,28 @@ GoRouter createRouter(AuthViewModel authViewModel) {
       path: 'create',
       builder: (_, __) => const CircularCreateScreen(),
     ),
+    GoRoute(
+      path: ':id',
+      builder: (_, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return CircularDetailScreen(id: id);
+      },
+    ),
   ],
+),
+GoRoute(
+  path: '/inscripciones',
+  builder: (_, __) => const InscripcionListScreen(),
+  routes: [
+    GoRoute(
+      path: 'create',
+      builder: (_, __) => const InscripcionCreateScreen(),
+    ),
+  ],
+),
+GoRoute(
+  path: '/mis-clases',
+  builder: (_, __) => const MisClasesScreen(),
 ),
         ],
       ),

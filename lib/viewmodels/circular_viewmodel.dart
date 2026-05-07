@@ -9,6 +9,7 @@ class CircularViewModel extends ChangeNotifier {
   bool loading  = false;
   bool creating = false;
   List<Circular> circulares = [];
+   Circular? selected;
 
   Future<void> loadCirculares() async {
     loading = true;
@@ -17,6 +18,16 @@ class CircularViewModel extends ChangeNotifier {
     loading = false;
     notifyListeners();
   }
+  Future<void> loadCircularDetail(int id) async {
+    loading = true;
+    notifyListeners();
+
+    selected = await repository.getCircularById(id);
+
+    loading = false;
+    notifyListeners();
+  }
+
 
   Future<bool> createCircular({
     required String titulo,

@@ -90,7 +90,7 @@ Future<bool> createParalelo({
     return success;
   }
 
-   Future<void> loadParalelosByCurso(int periodoId, int cursoId) async {
+ /*   Future<void> loadParalelosByCurso(int periodoId, int cursoId) async {
     
   loading = true;
   notifyListeners();
@@ -99,7 +99,7 @@ Future<bool> createParalelo({
 
   loading = false;
   notifyListeners();
-} 
+}  */
 /* Future<void> loadParalelosByCurso(int periodoId, int cursoId) async {
     _periodoId  = periodoId;
     _cursoId    = cursoId;
@@ -116,5 +116,22 @@ Future<bool> createParalelo({
   Future<void> reload() async {
     if (_periodoId == null || _cursoId == null) return;
     await loadParalelosByCurso(_periodoId!, _cursoId!);
-  } */
+  } */Future<void> loadParalelosByCurso(int periodoId, int cursoId) async {
+  _periodoId = periodoId;   // 👈 GUARDAR
+  _cursoId = cursoId;       // 👈 GUARDAR
+
+  loading = true;
+  notifyListeners();
+
+  paralelos = await repository.getParalelosByCurso(periodoId, cursoId);
+
+  loading = false;
+  notifyListeners();
+}
+Future<void> reload() async {
+  if (_periodoId == null || _cursoId == null) return;
+
+  await loadParalelosByCurso(_periodoId!, _cursoId!);
+}
+
 }

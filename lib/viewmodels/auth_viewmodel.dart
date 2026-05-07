@@ -30,30 +30,48 @@ class AuthViewModel extends ChangeNotifier {
     try {
       final response = await repository.login(email, password);
 
-      if (response != null) {
-        user = response;
-        token = response.token;
-        
-        await SecureStorage.saveSession(
-          token: response.token,
-          role: response.roles.first,
-          name: response.name,
-          email: response.email,
-        );
-        
-        if (kDebugMode) debugPrint('✅ LOGIN OK');
-        return true;
-      } else {
-        loginError = 'Credenciales inválidas';
-        return false;
-      }
+      user = response;
+      token = response.token;
+
+      await SecureStorage.saveSession(
+        token: response.token,
+        role: response.roles.first,
+        name: response.name,
+        email: response.email,
+      );
+
+      if (kDebugMode) debugPrint('✅ LOGIN OK');
+
+      return true;
     } on DioException catch (e) {
-      loginError = e.response?.data?['message'] ?? 'Error de conexión';
-      if (kDebugMode) debugPrint('❌ LOGIN ERROR: $e');
+      final data = e.response?.data;
+
+       if (data != null &&
+          data['errors'] != null &&
+          data['errors']['email'] != null) {
+        loginError = data['errors']['email'][0].toString();
+      } else if (data != null &&
+          data['errors'] != null &&
+          data['errors']['password'] != null) {
+        loginError = data['errors']['password'][0].toString();
+      } else {
+        loginError = data?['message']?.toString() ?? 'Error de conexión';
+      }
+       if (loginError == 'The email must be a valid email address.') {
+       loginError = 'Correo inválido';
+  }
+  if (loginError == 'Credenciales incorrectas') {
+  loginError = 'Correo o contraseña incorrectos';
+}
+
+      if (kDebugMode) debugPrint('❌ LOGIN ERROR: $loginError');
+
       return false;
     } catch (e) {
       loginError = 'Error inesperado';
+
       if (kDebugMode) debugPrint('❌ LOGIN ERROR: $e');
+
       return false;
     } finally {
       loading = false;
@@ -73,28 +91,37 @@ class AuthViewModel extends ChangeNotifier {
         password: password,
       );
 
-      if (response != null) {
-        user = response;
-        token = response.token;
+      user = response;
+      token = response.token;
 
-        await SecureStorage.saveSession(
-          token: response.token,
-          role: response.roles.first,
-          name: response.name,
-          email: response.email,
-        );
+      await SecureStorage.saveSession(
+        token: response.token,
+        role: response.roles.first,
+        name: response.name,
+        email: response.email,
+      );
 
-        if (kDebugMode) debugPrint('✅ REGISTER OK');
-        return true;
-      } else {
-        loginError = 'Error al registrarse';
-        return false;
-      }
+      if (kDebugMode) debugPrint('✅ REGISTER OK');
+
+      return true;
     } on DioException catch (e) {
-      loginError = e.response?.data?['message'] ?? 'Error de conexión';
+      final data = e.response?.data;
+
+      loginError =
+          data?['errors']?['name']?.first ??
+          data?['errors']?['email']?.first ??
+          data?['errors']?['password']?.first ??
+          data?['message'] ??
+          'Error de conexión';
+
+      if (kDebugMode) debugPrint('❌ REGISTER ERROR: $loginError');
+
       return false;
     } catch (e) {
       loginError = 'Error inesperado';
+
+      if (kDebugMode) debugPrint('❌ REGISTER ERROR: $e');
+
       return false;
     } finally {
       loading = false;
@@ -107,6 +134,7 @@ class AuthViewModel extends ChangeNotifier {
 
     if (session['token'] != null) {
       token = session['token'];
+
       user = Users(
         id: null,
         name: session['name'] ?? '',
@@ -114,7 +142,9 @@ class AuthViewModel extends ChangeNotifier {
         token: session['token']!,
         roles: session['role'] != null ? [session['role']!] : [],
       );
+
       if (kDebugMode) debugPrint('🔁 SESIÓN RESTAURADA');
+
       notifyListeners();
     }
   }
@@ -130,6 +160,7 @@ class AuthViewModel extends ChangeNotifier {
     token = null;
 
     if (kDebugMode) debugPrint('🔓 SESIÓN CERRADA');
+
     notifyListeners();
   }
 }

@@ -16,6 +16,7 @@ import 'repository/profesor_repository.dart';
 import 'repository/estudiante_repository.dart';
 import 'repository/padre_familia_repository.dart';
 import 'repository/circular_repository.dart';
+import 'repository/inscripcion_repository.dart';
 
 // ViewModels
 import 'viewmodels/auth_viewmodel.dart';
@@ -30,6 +31,7 @@ import 'viewmodels/estudiante_viewmodel.dart';
 import 'viewmodels/padre_familia_viewmodel.dart'; 
 import 'viewmodels/circular_viewmodel.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'viewmodels/inscripcion_viewmodel.dart';
 
 
 void main() async {
@@ -100,7 +102,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => AcademicPeriodViewModel(
             repository: AcademicPeriodRepository(dio),
-          ),
+          )..loadPeriodoActivo(),
         ),
 
         // Asignación
@@ -116,6 +118,12 @@ void main() async {
             repository: CircularRepository(dio),  
           ),
         ),
+        ChangeNotifierProvider(
+      create: (_) => InscripcionViewModel(
+    repository: InscripcionRepository(dio),
+    periodoRepository: AcademicPeriodRepository(dio),
+  ),
+),
       ],
       child: MyApp(router: router),
 

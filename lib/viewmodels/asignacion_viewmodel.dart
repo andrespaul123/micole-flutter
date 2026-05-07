@@ -4,6 +4,7 @@ import '../models/asignacion.dart';
 import '../repository/asignacion_repository.dart';
 import '../repository/academic_period_repository.dart';
 import '../models/horario_curso.dart';
+import '../models/mi_clase.dart';
 
 
 class AsignacionViewModel extends ChangeNotifier {
@@ -17,6 +18,10 @@ class AsignacionViewModel extends ChangeNotifier {
 
   Map<String, List<Asignacion>> horario = {};
   AcademicPeriod? periodoActivo;
+  List<MiClase> misClases = [];
+  List<AcademicPeriod> periodosProfesor = [];
+  AcademicPeriod? periodoSeleccionadoClases;
+  bool loadingClases = false;
 
    Future<void> loadPeriodo() async {
     periodoActivo = await periodoRepository.getPeriodoActivo();
@@ -100,7 +105,7 @@ bool loadingCurso = false;
   notifyListeners();
 }
 } */
-Future<void> loadHorarioCurso({
+/* Future<void> loadHorarioCurso({
   required int cursoId,
   required int paraleloId,
 }) async {
@@ -126,6 +131,69 @@ Future<void> loadHorarioCurso({
   );
 
   loadingCurso = false;
+  notifyListeners();
+} */
+Future<void> loadHorarioCurso({
+  required int cursoId,
+  required int paraleloId,
+}) async {
+  loadingCurso = true;
+  notifyListeners();
+
+  // 🔥 asegurar periodo
+  if (periodoActivo == null) {
+    await loadPeriodo();
+  }
+
+  // 🔥 si no hay periodo → limpiar y salir
+  if (periodoActivo == null) {
+    horarioCurso = {};
+    loadingCurso = false;
+    notifyListeners();
+    return;
+  }
+
+  horarioCurso = await repository.getHorarioCurso(
+    periodoId: periodoActivo!.id!,
+    cursoId: cursoId,
+    paraleloId: paraleloId,
+  );
+
+  loadingCurso = false;
+  notifyListeners();
+}
+
+Future<void> loadPeriodosYClases() async {
+  loadingClases = true;
+  notifyListeners();
+
+  periodosProfesor = await periodoRepository.getPeriodos();
+
+  if (periodosProfesor.isNotEmpty) {
+    periodoSeleccionadoClases = periodosProfesor.firstWhere(
+      (p) => p.activo == true,
+      orElse: () => periodosProfesor.first,
+    );
+    await _cargarMisClases();
+  } else {
+    loadingClases = false;
+    notifyListeners();
+  }
+}
+Future<void> cambiarPeriodoClases(AcademicPeriod periodo) async {
+  periodoSeleccionadoClases = periodo;
+  misClases = [];
+  notifyListeners();
+  await _cargarMisClases();
+}
+
+Future<void> _cargarMisClases() async {
+  if (periodoSeleccionadoClases?.id == null) return;
+  loadingClases = true;
+  notifyListeners();
+  misClases = await repository.getMisClases(
+      periodoSeleccionadoClases!.id!);
+  loadingClases = false;
   notifyListeners();
 }
 }

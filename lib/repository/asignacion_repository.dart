@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../models/asignacion.dart';
 import '../models/horario_curso.dart';
+import '../models/mi_clase.dart';
 
 class AsignacionRepository {
   final Dio _dio;
@@ -87,6 +88,19 @@ Future<Map<String, List<HorarioItem>>> getHorarioCurso({
       }
     }
     return "Error desconocido";
+  }
+}
+Future<List<MiClase>> getMisClases(int periodoId) async {
+  try {
+    final response =
+        await _dio.get('/periodos/$periodoId/mis-clases');
+    final List data = response.data['asignaciones'] ?? [];
+    return data.map((e) => MiClase.fromJson(e)).toList();
+  } catch (e) {
+    if (e is DioException) {
+      debugPrint('ERROR MIS CLASES: ${e.response?.data}');
+    }
+    return [];
   }
 }
 }

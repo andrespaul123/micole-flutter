@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/tenant_viewmodel.dart';
 
 class MainLayout extends StatefulWidget {
-  /// Pantalla activa inyectada por el ShellRoute de GoRouter.
   final Widget child;
-
-  /// Ruta actual (state.matchedLocation desde el ShellRoute).
   final String location;
 
   const MainLayout({
@@ -22,274 +20,433 @@ class MainLayout extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<MainLayout> {
-  static const _purple     = Color(0xFF4F46E5);
-  static const _purpleSoft = Color(0xFFF0EFFF);
-  static const _gray400    = Color(0xFF9CA3AF);
-  static const _bgPage     = Color(0xFFF5F7FB);
+  static const Color primary = Color(0xFF4F46E5);
+  static const Color bg = Color(0xFFF5F7FB);
 
-  // ── Tabs director ─────────────────────────────────────────────────────────
-  static const _directorTabs = [
-    _NavTab(Icons.home_outlined,           Icons.home,            'Inicio',     '/home'),
-    _NavTab(Icons.menu_book_outlined,      Icons.menu_book,       'Materias',   '/materias'),
-    _NavTab(Icons.person_outline,          Icons.person,          'Profesores', '/profesores'),
-     _NavTab(Icons.school_outlined,         Icons.school,          'Estudiantes','/estudiantes'),
-     _NavTab(Icons.family_restroom, Icons.family_restroom,      'Padres', '/padres'),
-    _NavTab(Icons.class_outlined,          Icons.class_,          'Cursos',     '/cursos'),
-    _NavTab(Icons.calendar_month_outlined, Icons.calendar_month,  'Períodos',   '/periodos'),
-    _NavTab(Icons.school_outlined,         Icons.school,          'Colegio',    '/colegio'),
-    _NavTab(Icons.campaign_outlined, Icons.campaign, 'Circulares', '/circulares'),
-  ];
-   static const _profesorTabs = [
-    _NavTab(Icons.home_outlined,     Icons.home,     'Inicio',     '/home'),
-    _NavTab(Icons.campaign_outlined, Icons.campaign, 'Circulares', '/circulares'),
-  ];
-  static const _estudianteTabs = [
-  _NavTab(Icons.home_outlined, Icons.home, 'Inicio', '/home'),
-  _NavTab(Icons.campaign_outlined, Icons.campaign, 'Circulares', '/circulares'),
-
-];
-
-  // ── Tabs super-admin ──────────────────────────────────────────────────────
-  static const _adminTabs = [
-    _NavTab(Icons.home_outlined,        Icons.home,         'Inicio',   '/home'),
-    _NavTab(Icons.school_outlined,      Icons.school,       'Colegios', '/colegios'),
-    _NavTab(Icons.add_business_outlined,Icons.add_business, 'Crear',    '/colegios/create'),
-  ];
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+
     Future.microtask(() {
       final auth = context.read<AuthViewModel>();
+
       if (auth.role == 'director') {
         final vm = context.read<TenantViewModel>();
-        if (vm.currentTenant == null && !vm.loading) vm.loadMyTenant();
+
+        if (vm.currentTenant == null && !vm.loading) {
+          vm.loadMyTenant();
+        }
       }
     });
   }
 
-  /// Devuelve el índice del tab activo según la ruta actual.
-  int _selectedIndex(List<_NavTab> tabs) {
-    // Iteramos en reversa para que rutas más largas tengan prioridad
-    for (int i = tabs.length - 1; i >= 0; i--) {
-      if (widget.location.startsWith(tabs[i].route)) return i;
-    }
-    return 0;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final auth     = Provider.of<AuthViewModel>(context);
-    final tenantVM = Provider.of<TenantViewModel>(context);
-    final role     = auth.role;
+    final auth = context.watch<AuthViewModel>();
+    final tenant = context.watch<TenantViewModel>();
+    final role = auth.role ?? '';
 
-    final tabs          = role == 'super-admin' ? _adminTabs : role == 'profesor' ?  _profesorTabs :role=='estudiante' ?_estudianteTabs : _directorTabs;
-    final selectedIndex = _selectedIndex(tabs);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth >= 1000;
 
-    return Scaffold(
-      backgroundColor: _bgPage,
+        return Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: bg,
 
-      // ── AppBar ─────────────────────────────────────────────────────────
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(62),
-        child: Container(
-          color: _purple,
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                children: [
-                  _buildLogo(role, tenantVM),
-                  const SizedBox(width: 10),
-                  Expanded(child: _buildTitle(role, tenantVM)),
-                  GestureDetector(
-                    onTap: () => _showLogoutDialog(context, auth),
-                    child: Container(
-                      width: 34, height: 34,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        _initials(auth.user?.name ?? '?'),
-                        style: const TextStyle(
-                          color: _purple, fontSize: 12, fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          drawer: isDesktop ? null : _buildDrawer(context, role),
+
+          appBar: _buildTopBar(context, auth, tenant, isDesktop),
+
+          body: Row(
+            children: [
+              if (isDesktop) _buildSidebar(context, role),
+              Expanded(child: widget.child),
+            ],
           ),
-        ),
-      ),
 
-      // ── Body: child del ShellRoute ──────────────────────────────────────
-      body: widget.child,
-
-      // ── Bottom nav ─────────────────────────────────────────────────────
-      bottomNavigationBar: _buildBottomNav(tabs, selectedIndex),
+          bottomNavigationBar:
+              isDesktop ? null : _buildBottomNav(context, role),
+        );
+      },
     );
   }
 
-  // ── Logo ─────────────────────────────────────────────────────────────────
-  Widget _buildLogo(String? role, TenantViewModel tenantVM) {
-    final logoUrl = role == 'director' ? tenantVM.currentTenant?.logoUrl : null;
-    if (logoUrl != null && logoUrl.isNotEmpty) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Image.network(logoUrl, width: 36, height: 36, fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _logoFallback()),
-      );
-    }
-    return _logoFallback();
-  }
+  // ==========================================================
+  // TOP BAR
+  // ==========================================================
+  PreferredSizeWidget _buildTopBar(
+    BuildContext context,
+    AuthViewModel auth,
+    TenantViewModel tenant,
+    bool isDesktop,
+  ) {
+    final role = auth.role ?? '';
 
-  Widget _logoFallback() => Container(
-    width: 36, height: 36,
-    decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.15),
-      borderRadius: BorderRadius.circular(10),
-    ),
-    alignment: Alignment.center,
-    child: const Icon(Icons.school_outlined, color: Colors.white, size: 20),
-  );
+    final title = role == 'director'
+        ? (tenant.currentTenant?.name ?? 'Mi Colegio')
+        : role == 'super-admin'
+            ? 'Panel Admin'
+            : 'Mi Panel';
 
-  // ── Título ────────────────────────────────────────────────────────────────
-  Widget _buildTitle(String? role, TenantViewModel tenantVM) {
-    final title    = role == 'director'
-        ? (tenantVM.currentTenant?.name ?? 'Cargando...')
-        : 'Admin Panel';
-    final subtitle = role == 'director' ? 'Panel Director' : 'Super Administrador';
+    final subtitle = role == 'director'
+        ? 'Panel Director'
+        : role == 'super-admin'
+            ? 'Super Administrador'
+            : role.toUpperCase();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(title, maxLines: 1, overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
-        Text(subtitle,
-          style: TextStyle(color: Colors.white.withOpacity(0.65), fontSize: 11)),
+    return AppBar(
+      backgroundColor: primary,
+      elevation: 0,
+      automaticallyImplyLeading: !isDesktop,
+      titleSpacing: 16,
+      title: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.school_outlined,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white.withOpacity(.75),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 14),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => _showLogoutDialog(context),
+            child: Container(
+              width: 42,
+              height: 42,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                _initials(auth.user?.name ?? '?'),
+                style: const TextStyle(
+                  color: primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        )
       ],
     );
   }
 
-  // ── Bottom nav ────────────────────────────────────────────────────────────
-  Widget _buildBottomNav(List<_NavTab> tabs, int selectedIndex) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: const Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.07), blurRadius: 20, offset: const Offset(0, -4))],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-          child: Row(
-            children: List.generate(tabs.length, (i) {
-              final tab    = tabs[i];
-              final active = selectedIndex == i;
+  // ==========================================================
+  // SIDEBAR DESKTOP
+  // ==========================================================
+  Widget _buildSidebar(BuildContext context, String role) {
+    final items = _menuItems(role);
 
-              return Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  // go() para navegación de primer nivel (reemplaza la pila del shell)
-                  onTap: () => context.go(tab.route),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOut,
-                    padding: const EdgeInsets.symmetric(vertical: 7),
-                    decoration: BoxDecoration(
-                      color: active ? _purpleSoft : Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: Icon(
-                            active ? tab.activeIcon : tab.icon,
-                            key: ValueKey(active),
-                            size: 22,
-                            color: active ? _purple : _gray400,
-                          ),
+    return Container(
+      width: 270,
+      color: Colors.white,
+      child: Column(
+        children: [
+          const SizedBox(height: 18),
+
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Icon(Icons.dashboard_outlined, color: primary),
+                SizedBox(width: 10),
+                Text(
+                  'Menú Principal',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                )
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              children: items.map((e) {
+                final active = widget.location.startsWith(e.route);
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Material(
+                    color: active
+                        ? primary.withOpacity(.08)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(14),
+                    child: ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      leading: Icon(
+                        e.icon,
+                        color: active ? primary : Colors.grey[700],
+                      ),
+                      title: Text(
+                        e.label,
+                        style: TextStyle(
+                          fontWeight:
+                              active ? FontWeight.w700 : FontWeight.w500,
+                          color: active ? primary : Colors.black87,
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          tab.label,
-                          maxLines: 1, overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 9.5,
-                            fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-                            color: active ? _purple : _gray400,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          width: active ? 4 : 0, height: active ? 4 : 0,
-                          decoration: const BoxDecoration(color: _purple, shape: BoxShape.circle),
-                        ),
-                      ],
+                      ),
+                      onTap: () => context.go(e.route),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              }).toList(),
+            ),
           ),
+        ],
+      ),
+    );
+  }
+
+  // ==========================================================
+  // DRAWER MOBILE
+  // ==========================================================
+  Widget _buildDrawer(BuildContext context, String role) {
+    final items = _menuItems(role);
+
+    return Drawer(
+      child: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            const Text(
+              'Menú',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(),
+
+            Expanded(
+              child: ListView(
+                children: items.map((e) {
+                  return ListTile(
+                    leading: Icon(e.icon),
+                    title: Text(e.label),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.go(e.route);
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  // ── Logout ────────────────────────────────────────────────────────────────
-  Future<void> _showLogoutDialog(BuildContext ctx, AuthViewModel auth) async {
-    final confirm = await showDialog<bool>(
-      context: ctx,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Cerrar sesión'),
-        content: const Text('¿Seguro que quieres salir?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+  // ==========================================================
+  // BOTTOM NAV MOBILE POR ROL
+  // ==========================================================
+  Widget _buildBottomNav(BuildContext context, String role) {
+    List<_MenuItem> tabs;
+
+    if (role == 'super-admin') {
+      tabs = [
+        _MenuItem('Inicio', Icons.home_outlined, '/home'),
+        _MenuItem('Colegios', Icons.school_outlined, '/colegios'),
+        _MenuItem('Más', Icons.menu, '/more'),
+      ];
+    } else if (role == 'profesor' || role == 'estudiante') {
+      tabs = [
+        _MenuItem('Inicio', Icons.home_outlined, '/home'),
+        _MenuItem('Avisos', Icons.campaign_outlined, '/circulares'),
+        _MenuItem('Más', Icons.menu, '/more'),
+      ];
+    } else {
+      tabs = [
+        _MenuItem('Inicio', Icons.home_outlined, '/home'),
+        _MenuItem('Colegio', Icons.school_outlined, '/colegio'),
+        _MenuItem('Avisos', Icons.campaign_outlined, '/circulares'),
+        _MenuItem('Más', Icons.menu, '/more'),
+      ];
+    }
+
+    int selectedIndex = 0;
+
+    for (int i = 0; i < tabs.length; i++) {
+      if (widget.location.startsWith(tabs[i].route) &&
+          tabs[i].route != '/more') {
+        selectedIndex = i;
+      }
+    }
+
+    return NavigationBar(
+      selectedIndex: selectedIndex,
+      height: 72,
+      backgroundColor: Colors.white,
+      indicatorColor: primary.withOpacity(.12),
+      onDestinationSelected: (value) {
+        final route = tabs[value].route;
+
+        if (route == '/more') {
+          _scaffoldKey.currentState?.openDrawer();
+        } else {
+          context.go(route);
+        }
+      },
+      destinations: tabs.map((e) {
+        return NavigationDestination(
+          icon: Icon(e.icon),
+          label: e.label,
+        );
+      }).toList(),
+    );
+  }
+
+  // ==========================================================
+  // MENU POR ROL
+  // ==========================================================
+  List<_MenuItem> _menuItems(String role) {
+    switch (role) {
+      case 'super-admin':
+        return [
+          _MenuItem('Inicio', Icons.home_outlined, '/home'),
+          _MenuItem('Colegios', Icons.school_outlined, '/colegios'),
+          _MenuItem(
+              'Crear Colegio', Icons.add_business_outlined, '/colegios/create'),
+        ];
+
+      case 'profesor':
+        return [
+          _MenuItem('Inicio', Icons.home_outlined, '/home'),
+           _MenuItem('Mis Clases', Icons.class_outlined, '/mis-clases'),
+          _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
+        ];
+
+      case 'estudiante':
+        return [
+          _MenuItem('Inicio', Icons.home_outlined, '/home'),
+          _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
+        ];
+
+      case 'director':
+      default:
+        return [
+          _MenuItem('Inicio', Icons.home_outlined, '/home'),
+          _MenuItem('Materias', Icons.menu_book_outlined, '/materias'),
+          _MenuItem('Profesores', Icons.person_outline, '/profesores'),
+          _MenuItem('Estudiantes', Icons.school_outlined, '/estudiantes'),
+          _MenuItem('Padres', Icons.family_restroom, '/padres'),
+          _MenuItem('Inscripciones', Icons.assignment_ind_outlined, '/inscripciones'),
+          _MenuItem('Cursos', Icons.class_outlined, '/cursos'),
+          _MenuItem('Períodos', Icons.calendar_month_outlined, '/periodos'),
+          _MenuItem('Colegio', Icons.school_outlined, '/colegio'),
+          _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
+        ];
+    }
+  }
+
+  // ==========================================================
+  // LOGOUT
+  // ==========================================================
+  Future<void> _showLogoutDialog(BuildContext context) async {
+    final auth = context.read<AuthViewModel>();
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _purple, foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          title: const Text('Cerrar sesión'),
+          content: const Text('¿Deseas salir de la aplicación?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancelar'),
             ),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Salir'),
-          ),
-        ],
-      ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: primary,
+              ),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Salir'),
+            ),
+          ],
+        );
+      },
     );
 
-    if (confirm == true && mounted) {
+    if (result == true) {
       await auth.logout();
-      if (mounted) context.go('/login');
+
+      if (mounted) {
+        context.go('/login');
+      }
     }
   }
 
   String _initials(String name) {
-    final p = name.trim().split(' ');
-    if (p.length >= 2) return '${p[0][0]}${p[1][0]}'.toUpperCase();
-    return p[0].isNotEmpty ? p[0][0].toUpperCase() : '?';
+    final parts = name.trim().split(' ');
+
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+
+    if (parts.isNotEmpty && parts[0].isNotEmpty) {
+      return parts[0][0].toUpperCase();
+    }
+
+    return '?';
   }
 }
 
-// ── Modelo tab ────────────────────────────────────────────────────────────────
-class _NavTab {
+// ==========================================================
+// MODEL
+// ==========================================================
+class _MenuItem {
+  final String label;
   final IconData icon;
-  final IconData activeIcon;
-  final String   label;
-  final String   route;  
-  const _NavTab(this.icon, this.activeIcon, this.label, this.route);
+  final String route;
+
+  _MenuItem(this.label, this.icon, this.route);
 }

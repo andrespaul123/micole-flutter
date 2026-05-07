@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../viewmodels/paralelo_viewmodel.dart';
-import '../../viewmodels/curso_viewmodel.dart';
 import '../../core/widgest/auth_card.dart';
 import '../../core/widgest/auth_input.dart';
 
