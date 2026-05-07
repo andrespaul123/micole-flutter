@@ -93,7 +93,7 @@ Future<Map<String, List<HorarioItem>>> getHorarioCurso({
 Future<List<MiClase>> getMisClases(int periodoId) async {
   try {
     final response =
-        await _dio.get('/periodos/$periodoId/mis-clases');
+        await _dio.get('/periodos/$periodoId/asignaciones/mis-clases');
     final List data = response.data['asignaciones'] ?? [];
     return data.map((e) => MiClase.fromJson(e)).toList();
   } catch (e) {
