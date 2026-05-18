@@ -77,6 +77,17 @@ class _EstudianteCreateScreenState extends State<EstudianteCreateScreen> {
                 icon: Icons.badge,
                 validator: (v) => v!.isEmpty ? 'Campo requerido' : null,
               ),
+              if (vm.error != null) ...[
+  const SizedBox(height: 10),
+
+  Text(
+    vm.error!,
+    style: const TextStyle(
+      color: Colors.red,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+],
               const SizedBox(height: 20),
 
               SizedBox(
@@ -106,11 +117,11 @@ class _EstudianteCreateScreenState extends State<EstudianteCreateScreen> {
                             );
 
                             context.go('/estudiantes');
-                          } else {
+                          } /* else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Error al crear')),
                             );
-                          }
+                          } */
                         },
                   child: vm.creating
                       ? const SizedBox(

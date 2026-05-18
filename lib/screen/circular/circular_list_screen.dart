@@ -44,6 +44,16 @@ class _CircularListScreenState extends State<CircularListScreen> {
 
       body: vm.loading
           ? const Center(child: CircularProgressIndicator())
+          : vm.error != null
+    ? Center(
+        child: Text(
+          vm.error!,
+          style: const TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      )
           : vm.circulares.isEmpty
               ? _buildEmpty()
               : RefreshIndicator(
@@ -256,7 +266,7 @@ class _CircularListScreenState extends State<CircularListScreen> {
           content: Text(
             ok
                 ? 'Circular eliminada'
-                : 'Error al eliminar',
+                : (vm.error ?? 'Error al eliminar')
           ),
         ),
       );

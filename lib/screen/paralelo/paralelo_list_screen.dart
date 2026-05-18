@@ -53,6 +53,16 @@ class _ParaleloListScreenState extends State<ParaleloListScreen> {
 
       body: vm.loading && vm.paralelos.isEmpty
           ? const Center(child: CircularProgressIndicator())
+           : vm.error != null
+        ? Center(
+            child: Text(
+              vm.error!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
           : vm.paralelos.isEmpty
               ? const Center(child: Text('No hay paralelos'))
               : ListView.builder(

@@ -6,46 +6,33 @@ class PadreFamiliaRepository {
   PadreFamiliaRepository(this._dio);
 
   Future<List<PadreFamilia>> getPadres() async {
-    try {
       final response = await _dio.get('/padre-familias');
       return (response.data as List)
           .map((e) => PadreFamilia.fromJson(e))
           .toList();
-    } catch (e) {
-      if (e is DioException) print("ERROR GET PADRES: ${e.response?.data}");
-      return [];
     }
-  }
 
-  Future<bool> createPadre({
+  Future<PadreFamilia> createPadre({
     required String name,
     required String email,
     required String password,
     String? telefono,
     String? ocupacion,
   }) async {
-    try {
-      await _dio.post('/padre-familias', data: {
+   
+      final response = await _dio.post('/padre-familias', data: {
         'name': name,
         'email': email,
         'password': password,
         'telefono': telefono,
         'ocupacion': ocupacion,
       });
-      return true;
-    } catch (e) {
-      if (e is DioException) print("ERROR CREATE PADRE: ${e.response?.data}");
-      return false;
-    }
+      return PadreFamilia.fromJson(response.data['data']);
+    
   }
 
-  Future<bool> deletePadre(int id) async {
-    try {
+  Future<void> deletePadre(int id) async {
+    
       await _dio.delete('/padre-familias/$id');
-      return true;
-    } catch (e) {
-      if (e is DioException) print("ERROR DELETE PADRE: ${e.response?.data}");
-      return false;
-    }
   }
 }

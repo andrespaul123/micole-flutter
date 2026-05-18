@@ -37,6 +37,17 @@ class _EstudianteListScreenState extends State<EstudianteListScreen> {
 
       body: vm.loading
           ? const Center(child: CircularProgressIndicator())
+           : vm.error != null
+        ? Center(
+            child: Text(
+              vm.error!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
+
           : vm.estudiantes.isEmpty
               ? const Center(child: Text("No hay estudiantes"))
               : ListView.builder(

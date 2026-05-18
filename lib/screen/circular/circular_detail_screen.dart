@@ -41,7 +41,19 @@ class _CircularDetailScreenState
         body: Center(child: CircularProgressIndicator()),
       );
     }
-
+    if (vm.error != null) {
+  return Scaffold(
+    body: Center(
+      child: Text(
+        vm.error!,
+        style: const TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  );
+}
     final c = vm.selected;
 
     if (c == null) {

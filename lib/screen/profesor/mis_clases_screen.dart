@@ -197,9 +197,15 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () {
-                      // TODO: navegar al aula de la clase
-                      // context.go('/mis-clases/${m.cursoId}/${m.paraleloId}');
-                    },
+  final vm = context.read<AsignacionViewModel>();
+
+  context.go(
+ '/mis-clases/${vm.periodoSeleccionadoClases!.id}/${m.cursoId}/${m.paraleloId}/${m.id}'
+ '?curso=${Uri.encodeComponent(m.curso ?? '')}'
+ '&paralelo=${Uri.encodeComponent(m.paralelo ?? '')}'
+ '&materia=${Uri.encodeComponent(m.materia ?? '')}',
+);
+},
                     child: const Text('Entrar',
                         style: TextStyle(fontSize: 13)),
                   ),

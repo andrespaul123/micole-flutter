@@ -1,56 +1,120 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import '../models/profesor.dart';
-import '../repository/profesor_repository.dart';
 import '../models/subject.dart';
+import '../repository/profesor_repository.dart';
+import '../core/utils/api_error_handler.dart';
 
 class ProfesorViewModel extends ChangeNotifier {
+
   final ProfesorRepository repository;
 
   bool loading = false;
   bool creating = false;
   bool assigning = false;
+
+  String? error;
+
   List<Profesor> profesores = [];
 
-  ProfesorViewModel({required this.repository});
-
-  // LISTAR
-  Future<void> loadProfesores() async {
-    loading = true;
-    notifyListeners();
-
-    profesores = await repository.getProfesores();
-
-    loading = false;
-    notifyListeners();
-  }
   List<Subject> subjectsProfesor = [];
 
-  Future<void> loadSubjectsProfesor(int profesorId) async {
-  loading = true;
-  notifyListeners();
+  ProfesorViewModel({
+    required this.repository,
+  });
 
-  subjectsProfesor = await repository.getSubjectsByProfesor(profesorId);
+  // =========================
+  // LISTAR
+  // =========================
 
-  loading = false;
-  notifyListeners();
-}
+  Future<void> loadProfesores() async {
 
+    loading = true;
 
+    error = null;
+
+    notifyListeners();
+
+    try {
+
+      profesores =
+          await repository.getProfesores();
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+    } finally {
+
+      loading = false;
+      notifyListeners();
+    }
+  }
+
+  // =========================
+  // MATERIAS DEL PROFESOR
+  // =========================
+
+  Future<void> loadSubjectsProfesor(
+    int profesorId,
+  ) async {
+
+    loading = true;
+
+    error = null;
+
+    notifyListeners();
+
+    try {
+
+      subjectsProfesor =
+          await repository.getSubjectsByProfesor(
+        profesorId,
+      );
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+    } finally {
+
+      loading = false;
+      notifyListeners();
+    }
+  }
+
+  // =========================
   // CREAR
- Future<bool> createProfesor({
+  // =========================
+
+  Future<bool> createProfesor({
     required String name,
     required String email,
     required String password,
     required String codigo,
     String? especialidad,
   }) async {
+
     if (creating) return false;
 
     creating = true;
+
+    error = null;
+
     notifyListeners();
 
     try {
-      final success = await repository.createProfesor(
+
+      final profesor =
+          await repository.createProfesor(
         name: name,
         email: email,
         password: password,
@@ -58,49 +122,112 @@ class ProfesorViewModel extends ChangeNotifier {
         especialidad: especialidad,
       );
 
-      if (success) {
-        await loadProfesores();
-      }
+      profesores.add(profesor);
 
-      return success;
+      return true;
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+      return false;
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+      return false;
+
     } finally {
+
       creating = false;
       notifyListeners();
     }
   }
-   Future<bool> asignarMateria({
+
+  // =========================
+  // ASIGNAR MATERIA
+  // =========================
+
+  Future<bool> asignarMateria({
     required int profesorId,
     required int subjectId,
   }) async {
+
     if (assigning) return false;
 
     assigning = true;
+
+    error = null;
+
     notifyListeners();
 
     try {
-      final success = await repository.asignarMateria(
+
+      await repository.asignarMateria(
         profesorId: profesorId,
         subjectId: subjectId,
       );
 
-      // ❌ NO recargamos toda la lista (como padres)
-      return success;
+      return true;
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+      return false;
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+      return false;
+
     } finally {
+
       assigning = false;
       notifyListeners();
     }
   }
-Future<bool> deleteProfesor(int id) async {
+
+  // =========================
+  // ELIMINAR
+  // =========================
+
+  Future<bool> deleteProfesor(int id) async {
+
     loading = true;
+
+    error = null;
+
     notifyListeners();
 
-    final success = await repository.deleteProfesor(id);
+    try {
 
-    if (success) await loadProfesores();
+      await repository.deleteProfesor(id);
 
-    loading = false;
-    notifyListeners();
-    return success;
+      profesores.removeWhere(
+        (e) => e.id == id,
+      );
+
+      return true;
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+      return false;
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+      return false;
+
+    } finally {
+
+      loading = false;
+      notifyListeners();
+    }
   }
-  
 }

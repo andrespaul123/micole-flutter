@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../models/users.dart';
 import '../repository/auth_repository.dart';
 import '../core/storage/secure_storage.dart';
+import '../core/utils/api_error_handler.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final AuthRepository repository;
@@ -35,7 +36,7 @@ class AuthViewModel extends ChangeNotifier {
 
       await SecureStorage.saveSession(
         token: response.token,
-        role: response.roles.first,
+        role: response.roles.isNotEmpty ? response.roles.first : '',
         name: response.name,
         email: response.email,
       );
@@ -44,25 +45,7 @@ class AuthViewModel extends ChangeNotifier {
 
       return true;
     } on DioException catch (e) {
-      final data = e.response?.data;
-
-       if (data != null &&
-          data['errors'] != null &&
-          data['errors']['email'] != null) {
-        loginError = data['errors']['email'][0].toString();
-      } else if (data != null &&
-          data['errors'] != null &&
-          data['errors']['password'] != null) {
-        loginError = data['errors']['password'][0].toString();
-      } else {
-        loginError = data?['message']?.toString() ?? 'Error de conexión';
-      }
-       if (loginError == 'The email must be a valid email address.') {
-       loginError = 'Correo inválido';
-  }
-  if (loginError == 'Credenciales incorrectas') {
-  loginError = 'Correo o contraseña incorrectos';
-}
+       loginError = ApiErrorHandler.handle(e);
 
       if (kDebugMode) debugPrint('❌ LOGIN ERROR: $loginError');
 
@@ -96,7 +79,7 @@ class AuthViewModel extends ChangeNotifier {
 
       await SecureStorage.saveSession(
         token: response.token,
-        role: response.roles.first,
+        role: response.roles.isNotEmpty ? response.roles.first : '',
         name: response.name,
         email: response.email,
       );
@@ -104,23 +87,23 @@ class AuthViewModel extends ChangeNotifier {
       if (kDebugMode) debugPrint('✅ REGISTER OK');
 
       return true;
-    } on DioException catch (e) {
-      final data = e.response?.data;
+      } on DioException catch (e) {
 
-      loginError =
-          data?['errors']?['name']?.first ??
-          data?['errors']?['email']?.first ??
-          data?['errors']?['password']?.first ??
-          data?['message'] ??
-          'Error de conexión';
+    loginError = ApiErrorHandler.handle(e);
 
-      if (kDebugMode) debugPrint('❌ REGISTER ERROR: $loginError');
+    if (kDebugMode) {
+      debugPrint('❌ REGISTER ERROR: $loginError');
+    }
 
-      return false;
-    } catch (e) {
-      loginError = 'Error inesperado';
+    return false;
 
-      if (kDebugMode) debugPrint('❌ REGISTER ERROR: $e');
+  } catch (e) {
+
+    loginError = 'Error inesperado';
+
+    if (kDebugMode) {
+      debugPrint('❌ REGISTER ERROR: $e');
+    }
 
       return false;
     } finally {
@@ -142,7 +125,10 @@ class AuthViewModel extends ChangeNotifier {
         token: session['token']!,
         roles: session['role'] != null ? [session['role']!] : [],
       );
-
+    if (kDebugMode) {
+  debugPrint('TOKEN: ${session['token']}');
+  debugPrint('ROLE: ${session['role']}');
+}
       if (kDebugMode) debugPrint('🔁 SESIÓN RESTAURADA');
 
       notifyListeners();

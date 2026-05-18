@@ -1,55 +1,88 @@
 import 'package:dio/dio.dart';
+
 import '../models/inscripcion.dart';
+import '../models/estudiante_clase.dart';
 
 class InscripcionRepository {
   final Dio _dio;
+
   InscripcionRepository(this._dio);
 
-  Future<List<Inscripcion>> getInscripciones(int periodoId) async {
-    try {
-      final response =
-          await _dio.get('/periodos/$periodoId/inscripciones');
-      final List data =
-          response.data is List ? response.data : response.data['data'] ?? [];
-      return data.map((e) => Inscripcion.fromJson(e)).toList();
-    } catch (e) {
-      if (e is DioException) {
-        print("ERROR GET INSCRIPCIONES: ${e.response?.data}");
-      }
-      return [];
-    }
+  // =========================
+  // LISTAR INSCRIPCIONES
+  // =========================
+
+  Future<List<Inscripcion>> getInscripciones(
+    int periodoId,
+  ) async {
+    final response = await _dio.get(
+      '/periodos/$periodoId/inscripciones',
+    );
+
+    final List data =
+        response.data is List
+            ? response.data
+            : response.data['data'] ?? [];
+
+    return data
+        .map((e) => Inscripcion.fromJson(e))
+        .toList();
   }
 
-  Future<String?> createInscripcion({
+  // =========================
+  // CREAR
+  // =========================
+
+  Future<Inscripcion> createInscripcion({
     required int periodoId,
     required int estudianteId,
     required int cursoId,
     required int paraleloId,
   }) async {
-    try {
-      await _dio.post('/periodos/$periodoId/inscripciones', data: {
+    final response = await _dio.post(
+      '/periodos/$periodoId/inscripciones',
+      data: {
         'estudiante_id': estudianteId,
         'curso_id': cursoId,
         'paralelo_id': paraleloId,
-      });
-      return null;
-    } catch (e) {
-      if (e is DioException) {
-        return e.response?.data?['message']?.toString() ?? 'Error desconocido';
-      }
-      return 'Error desconocido';
-    }
+      },
+    );
+
+    return Inscripcion.fromJson(response.data);
   }
 
-  Future<bool> deleteInscripcion(int periodoId, int id) async {
-    try {
-      await _dio.delete('/periodos/$periodoId/inscripciones/$id');
-      return true;
-    } catch (e) {
-      if (e is DioException) {
-        print("ERROR DELETE INSCRIPCION: ${e.response?.data}");
-      }
-      return false;
-    }
+  // =========================
+  // ELIMINAR
+  // =========================
+
+  Future<void> deleteInscripcion(
+    int periodoId,
+    int id,
+  ) async {
+    await _dio.delete(
+      '/periodos/$periodoId/inscripciones/$id',
+    );
+  }
+
+  // =========================
+  // ESTUDIANTES POR CLASE
+  // =========================
+
+  Future<List<EstudianteClase>>
+      getEstudiantesPorClase({
+    required int periodoId,
+    required int cursoId,
+    required int paraleloId,
+  }) async {
+    final response = await _dio.get(
+      '/periodos/$periodoId/cursos/$cursoId/paralelos/$paraleloId/estudiantes',
+    );
+
+    final List data =
+        response.data['estudiantes'] ?? [];
+
+    return data
+        .map((e) => EstudianteClase.fromJson(e))
+        .toList();
   }
 }

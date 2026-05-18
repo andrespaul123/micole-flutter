@@ -92,6 +92,17 @@ class _PadreCreateScreenState extends State<PadreCreateScreen> {
                       icon: Icons.work,
                       validator: (_) => null,
                     ),
+                    if (vm.error != null) ...[
+  const SizedBox(height: 10),
+
+  Text(
+    vm.error!,
+    style: const TextStyle(
+      color: Colors.red,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+],
                     const SizedBox(height: 20),
 
                     SizedBox(
@@ -132,14 +143,14 @@ class _PadreCreateScreenState extends State<PadreCreateScreen> {
                                   );
 
                                   context.go('/padres');
-                                } else {
+                                } /* else {
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(
                                     const SnackBar(
                                       content: Text('Error al crear'),
                                     ),
                                   );
-                                }
+                                } */
                               },
 
                         // 🔥 LOADER SOLO EN BOTÓN

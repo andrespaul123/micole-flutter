@@ -20,31 +20,52 @@ class AsignarHorarioScreen extends StatefulWidget {
   });
 
   @override
-  State<AsignarHorarioScreen> createState() => _AsignarHorarioScreenState();
+  State<AsignarHorarioScreen> createState() =>
+      _AsignarHorarioScreenState();
 }
 
-class _AsignarHorarioScreenState extends State<AsignarHorarioScreen> {
+class _AsignarHorarioScreenState
+    extends State<AsignarHorarioScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String? _dia;
   Subject? _subject;
   Curso? _curso;
   Paralelo? _paralelo;
+
   TimeOfDay? _horaInicio;
   TimeOfDay? _horaFin;
 
-  final _dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+  final _dias = [
+    'Lunes',
+    'Martes',
+    'Miercoles',
+    'Jueves',
+    'Viernes',
+    'Sabado',
+  ];
 
   @override
   void initState() {
     super.initState();
 
-    Future.microtask(() {
-      Provider.of<ProfesorViewModel>(context, listen: false)
-          .loadSubjectsProfesor(widget.profesorId);
+    Future.microtask(() async {
+      final profVM =
+          context.read<ProfesorViewModel>();
 
-      Provider.of<CursoViewModel>(context, listen: false).loadCursos();
-      Provider.of<ParaleloViewModel>(context, listen: false).loadParalelos();
+      final cursoVM =
+          context.read<CursoViewModel>();
+
+      final paraleloVM =
+          context.read<ParaleloViewModel>();
+
+      await profVM.loadSubjectsProfesor(
+        widget.profesorId,
+      );
+
+      await cursoVM.loadCursos();
+
+      await paraleloVM.loadParalelos();
     });
   }
 
@@ -79,24 +100,39 @@ class _AsignarHorarioScreenState extends State<AsignarHorarioScreen> {
         _horaInicio == null ||
         _horaFin == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Completa todos los campos')),
+        const SnackBar(
+          content: Text(
+            'Completa todos los campos',
+          ),
+        ),
       );
       return;
     }
 
-    final inicio = _horaInicio!.hour * 60 + _horaInicio!.minute;
-    final fin = _horaFin!.hour * 60 + _horaFin!.minute;
+    final inicio =
+        _horaInicio!.hour * 60 + _horaInicio!.minute;
+
+    final fin =
+        _horaFin!.hour * 60 + _horaFin!.minute;
 
     if (fin <= inicio) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('La hora fin debe ser mayor')),
+        const SnackBar(
+          content: Text(
+            'La hora fin debe ser mayor',
+          ),
+        ),
       );
       return;
     }
 
-    final vm = Provider.of<AsignacionViewModel>(context, listen: false);
+    FocusScope.of(context).unfocus();
 
-    final error = await vm.crearAsignacion(
+    final vm =
+        context.read<AsignacionViewModel>();
+
+    final success =
+        await vm.crearAsignacion(
       profesorId: widget.profesorId,
       subjectId: _subject!.id!,
       cursoId: _curso!.id!,
@@ -108,21 +144,33 @@ class _AsignarHorarioScreenState extends State<AsignarHorarioScreen> {
 
     if (!mounted) return;
 
-    if (error == null) {
+    if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Horario asignado correctamente')),
+        const SnackBar(
+          content: Text(
+            'Horario asignado correctamente',
+          ),
+        ),
       );
+
       context.go('/profesores');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error)),
+        SnackBar(
+          content: Text(
+            vm.error ?? 'Error al asignar horario',
+          ),
+        ),
       );
     }
   }
 
   Widget _label(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6, top: 10),
+      padding: const EdgeInsets.only(
+        bottom: 6,
+        top: 10,
+      ),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
@@ -138,101 +186,268 @@ class _AsignarHorarioScreenState extends State<AsignarHorarioScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<AsignacionViewModel>(context);
-    final profVM = Provider.of<ProfesorViewModel>(context);
-    final cursoVM = Provider.of<CursoViewModel>(context);
-    final paraleVM = Provider.of<ParaleloViewModel>(context);
+    final vm =
+        context.watch<AsignacionViewModel>();
+
+    final profVM =
+        context.watch<ProfesorViewModel>();
+
+    final cursoVM =
+        context.watch<CursoViewModel>();
+
+    final paraleloVM =
+        context.watch<ParaleloViewModel>();
 
     final paralelos = _curso == null
-        ? paraleVM.paralelos
-        : paraleVM.paralelos.where((p) => p.cursoId == _curso!.id).toList();
+        ? paraleloVM.paralelos
+        : paraleloVM.paralelos
+            .where(
+              (p) =>
+                  p.cursoId == _curso!.id,
+            )
+            .toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Asignar horario')),
+      appBar: AppBar(
+        title: const Text(
+          'Asignar horario',
+        ),
+      ),
 
-      body: vm.loading || profVM.loading
-          ? const Center(child: CircularProgressIndicator())
+      body: vm.loading ||
+              profVM.loading ||
+              cursoVM.loading
+          ? const Center(
+              child:
+                  CircularProgressIndicator(),
+            )
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding:
+                  const EdgeInsets.all(16),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
-
                     _label("Día"),
-                    DropdownButtonFormField<String>(
+
+                    DropdownButtonFormField<
+                        String>(
                       value: _dia,
+                      decoration:
+                          const InputDecoration(
+                        border:
+                            OutlineInputBorder(),
+                      ),
                       items: _dias
-                          .map((d) => DropdownMenuItem(value: d, child: Text(d)))
+                          .map(
+                            (d) =>
+                                DropdownMenuItem(
+                              value: d,
+                              child: Text(d),
+                            ),
+                          )
                           .toList(),
-                      onChanged: (v) => setState(() => _dia = v),
+                      onChanged: (v) =>
+                          setState(
+                        () => _dia = v,
+                      ),
+                      validator: (v) =>
+                          v == null
+                              ? 'Seleccione un día'
+                              : null,
                     ),
 
                     _label("Horario"),
-                    ListTile(
-                      title: Text(_horaInicio == null
-                          ? 'Hora inicio'
-                          : 'Inicio: ${_formatTime(_horaInicio!)}'),
-                      trailing: const Icon(Icons.access_time),
-                      onTap: () => _pickTime(true),
-                    ),
 
                     ListTile(
-                      title: Text(_horaFin == null
-                          ? 'Hora fin'
-                          : 'Fin: ${_formatTime(_horaFin!)}'),
-                      trailing: const Icon(Icons.access_time),
-                      onTap: () => _pickTime(false),
+                      shape:
+                          RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(
+                          10,
+                        ),
+                        side:
+                            const BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      title: Text(
+                        _horaInicio == null
+                            ? 'Hora inicio'
+                            : 'Inicio: ${_formatTime(_horaInicio!)}',
+                      ),
+                      trailing:
+                          const Icon(
+                        Icons.access_time,
+                      ),
+                      onTap: () =>
+                          _pickTime(true),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    ListTile(
+                      shape:
+                          RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(
+                          10,
+                        ),
+                        side:
+                            const BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      title: Text(
+                        _horaFin == null
+                            ? 'Hora fin'
+                            : 'Fin: ${_formatTime(_horaFin!)}',
+                      ),
+                      trailing:
+                          const Icon(
+                        Icons.access_time,
+                      ),
+                      onTap: () =>
+                          _pickTime(false),
                     ),
 
                     _label("Materia"),
-                    DropdownButtonFormField<Subject>(
+
+                    DropdownButtonFormField<
+                        Subject>(
                       value: _subject,
-                      items: profVM.subjectsProfesor
-                          .map((s) => DropdownMenuItem(
-                                value: s,
-                                child: Text(s.name ?? ''),
-                              ))
+                      decoration:
+                          const InputDecoration(
+                        border:
+                            OutlineInputBorder(),
+                      ),
+                      items: profVM
+                          .subjectsProfesor
+                          .map(
+                            (s) =>
+                                DropdownMenuItem(
+                              value: s,
+                              child: Text(
+                                s.name ?? '',
+                              ),
+                            ),
+                          )
                           .toList(),
-                      onChanged: (v) => setState(() => _subject = v),
+                      onChanged: (v) =>
+                          setState(
+                        () =>
+                            _subject = v,
+                      ),
+                      validator: (v) =>
+                          v == null
+                              ? 'Seleccione una materia'
+                              : null,
                     ),
 
                     _label("Curso"),
-                    DropdownButtonFormField<Curso>(
+
+                    DropdownButtonFormField<
+                        Curso>(
                       value: _curso,
+                      decoration:
+                          const InputDecoration(
+                        border:
+                            OutlineInputBorder(),
+                      ),
                       items: cursoVM.cursos
-                          .map((c) => DropdownMenuItem(
-                                value: c,
-                                child: Text('${c.nombre} · ${c.nivel}'),
-                              ))
+                          .map(
+                            (c) =>
+                                DropdownMenuItem(
+                              value: c,
+                              child: Text(
+                                '${c.nombre} · ${c.nivel}',
+                              ),
+                            ),
+                          )
                           .toList(),
                       onChanged: (v) {
                         setState(() {
                           _curso = v;
-                          _paralelo = null;
+                          _paralelo =
+                              null;
                         });
                       },
+                      validator: (v) =>
+                          v == null
+                              ? 'Seleccione un curso'
+                              : null,
                     ),
 
                     _label("Paralelo"),
-                    DropdownButtonFormField<Paralelo>(
+
+                    DropdownButtonFormField<
+                        Paralelo>(
                       value: _paralelo,
+                      decoration:
+                          const InputDecoration(
+                        border:
+                            OutlineInputBorder(),
+                      ),
                       items: paralelos
-                          .map((p) => DropdownMenuItem(
-                                value: p,
-                                child: Text('${p.nombre} · ${p.turno ?? ''}'),
-                              ))
+                          .map(
+                            (p) =>
+                                DropdownMenuItem(
+                              value: p,
+                              child: Text(
+                                '${p.nombre} · ${p.turno ?? ''}',
+                              ),
+                            ),
+                          )
                           .toList(),
-                      onChanged: (v) => setState(() => _paralelo = v),
+                      onChanged: (v) =>
+                          setState(
+                        () =>
+                            _paralelo = v,
+                      ),
+                      validator: (v) =>
+                          v == null
+                              ? 'Seleccione un paralelo'
+                              : null,
                     ),
+
+                    if (vm.error != null) ...[
+                      const SizedBox(
+                        height: 14,
+                      ),
+
+                      Text(
+                        vm.error!,
+                        style:
+                            const TextStyle(
+                          color: Colors.red,
+                          fontWeight:
+                              FontWeight.w600,
+                        ),
+                      ),
+                    ],
 
                     const SizedBox(height: 24),
 
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: vm.loading ? null : _guardar,
-                        child: const Text('Guardar'),
+                        onPressed:
+                            vm.creating
+                                ? null
+                                : _guardar,
+                        child: vm.creating
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child:
+                                    CircularProgressIndicator(
+                                  strokeWidth:
+                                      2,
+                                ),
+                              )
+                            : const Text(
+                                'Guardar',
+                              ),
                       ),
                     ),
                   ],

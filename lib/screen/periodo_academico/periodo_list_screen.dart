@@ -28,13 +28,20 @@ class _PeriodoListScreenState extends State<PeriodoListScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: _purple,
         onPressed: () async {context.go('/periodos/create');},
-       /*    await context.push('/periodos/nuevo'); 
-          if (mounted) vm.loadPeriodos();
-        }, */
         child: const Icon(Icons.add, color: Colors.white),
       ),
       body: vm.loading
           ? const Center(child: CircularProgressIndicator())
+          : vm.error != null
+    ? Center(
+        child: Text(
+          vm.error!,
+          style: const TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      )
           : vm.periodos.isEmpty
               ? Center(
                   child: Column(

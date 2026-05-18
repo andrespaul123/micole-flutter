@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import '../models/tenant_response.dart';
-import '../repository/tenant_repository.dart';
-import '../models/tenant.dart';
+import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../models/tenant.dart';
+import '../models/tenant_response.dart';
+
+import '../repository/tenant_repository.dart';
+
+import '../core/utils/api_error_handler.dart';
 
 class TenantViewModel extends ChangeNotifier {
   final TenantRepository repository;
@@ -11,46 +16,105 @@ class TenantViewModel extends ChangeNotifier {
   bool creating = false;
   bool updating = false;
   bool uploading = false;
-  TenantResponse? tenant;
-   Tenant? currentTenant;
-   List<Tenant> tenants = [];
 
-  TenantViewModel({required this.repository});
+  String? error;
+
+  TenantResponse? tenant;
+
+  Tenant? currentTenant;
+
+  List<Tenant> tenants = [];
+
+  TenantViewModel({
+    required this.repository,
+  });
+
+  // =========================
+  // LISTAR TENANTS
+  // =========================
 
   Future<void> loadTenants() async {
     loading = true;
+
+    error = null;
+
     notifyListeners();
 
-    tenants = await repository.getTenants();
+    try {
 
-    loading = false;
-    notifyListeners();
+      tenants = await repository.getTenants();
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+    } finally {
+
+      loading = false;
+
+      notifyListeners();
+    }
   }
+
+  // =========================
+  // MI TENANT
+  // =========================
 
   Future<void> loadMyTenant() async {
-  loading = true;
-  notifyListeners();
+    loading = true;
 
-  currentTenant = await repository.getMyTenant();
+    error = null;
 
-  loading = false;
-  notifyListeners();
+    notifyListeners();
+
+    try {
+
+      currentTenant = await repository.getMyTenant();
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+    } finally {
+
+      loading = false;
+
+      notifyListeners();
+    }
   }
 
-   Future<bool> createTenant({
+  // =========================
+  // CREAR
+  // =========================
+
+  Future<bool> createTenant({
     required String name,
     required String slug,
     required String directorName,
     required String directorEmail,
     required String password,
   }) async {
+
     if (creating) return false;
 
     creating = true;
+
+    error = null;
+
     notifyListeners();
 
     try {
-      tenant = await repository.createTenant(
+
+      final createdTenant =
+          await repository.createTenant(
         name: name,
         slug: slug,
         directorName: directorName,
@@ -58,70 +122,154 @@ class TenantViewModel extends ChangeNotifier {
         password: password,
       );
 
-      if (tenant != null) {
-        await loadTenants();
+      tenant = createdTenant;
+      if(createdTenant.tenant != null) {
+      tenants.add(createdTenant.tenant!);
       }
+      return true;
 
-      return tenant != null;
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+      return false;
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+      return false;
+
     } finally {
+
       creating = false;
+
+      notifyListeners();
+    }
+  }
+  Future<bool> uploadLogo(XFile file) async {
+
+    if (uploading) return false;
+
+    uploading = true;
+
+    error = null;
+
+    notifyListeners();
+
+    try {
+
+      final bytes = await file.readAsBytes();
+
+      final success =
+          await repository.uploadLogo(
+        bytes,
+        file.name,
+      );
+
+      await loadMyTenant();
+
+      return success;
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+      return false;
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+      return false;
+
+    } finally {
+
+      uploading = false;
+
       notifyListeners();
     }
   }
 
-  // 🔥 CAMBIAR firma
-Future<bool> uploadLogo(XFile file) async {
-    if (uploading) return false;
-
-    uploading = true;
-    notifyListeners();
-
-    final bytes = await file.readAsBytes();
-    final success = await repository.uploadLogo(bytes, file.name);
-
-    uploading = false;
-    notifyListeners();
-    return success;
-  }
-
-
-  // 🔥 EDITAR nombre y slug
- Future<bool> updateTenant({
+  Future<bool> updateTenant({
     required String name,
     required String slug,
   }) async {
+
     if (updating) return false;
 
     updating = true;
+
+    error = null;
+
     notifyListeners();
 
     try {
-      final updated = await repository.updateTenant(
+
+      final updated =
+          await repository.updateTenant(
         name: name,
         slug: slug,
       );
 
-      if (updated != null) {
-        currentTenant = updated;
-      }
+      currentTenant = updated;
 
-      return updated != null;
+      return true;
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+      return false;
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+      return false;
+
     } finally {
+
       updating = false;
+
       notifyListeners();
     }
   }
+  Future<bool> deleteTenant(int id) async {
 
-   Future<bool> deleteTenant(int id) async {
     loading = true;
+
+    error = null;
+
     notifyListeners();
 
-    final success = await repository.deleteTenant(id);
+    try {
 
-    if (success) await loadTenants();
+      await repository.deleteTenant(id);
 
-    loading = false;
-    notifyListeners();
-    return success;
+      tenants.removeWhere(
+        (t) => t.id == id,
+      );
+
+      return true;
+
+    } on DioException catch (e) {
+
+      error = ApiErrorHandler.handle(e);
+
+      return false;
+
+    } catch (e) {
+
+      error = 'Error inesperado';
+
+      return false;
+
+    } finally {
+
+      loading = false;
+
+      notifyListeners();
+    }
   }
 }

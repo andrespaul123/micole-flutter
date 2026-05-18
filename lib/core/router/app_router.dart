@@ -32,6 +32,10 @@ import '../../screen/circular/circular_detail_screen.dart';
 import '../../screen/inscripcion/inscripcion_create_screen.dart';
 import '../../screen/inscripcion/inscripcion_list_screen.dart';
 import '../../screen/profesor/mis_clases_screen.dart';
+import '../../screen/profesor/estudiantes_clase_screen.dart';
+import '../../screen/profesor/clase_dashboard_screen.dart';
+import '../../screen/profesor/anecdotario_list_screen.dart';
+import '../../screen/profesor/anecdotario_create_screen.dart';
 
 // Super Admin
 import '../../screen/tenant/tenant_list_screen.dart';
@@ -263,6 +267,90 @@ GoRoute(
   path: '/mis-clases',
   builder: (_, __) => const MisClasesScreen(),
 ),
+
+/* GoRoute(
+  path: '/mis-clases/:periodoId/:cursoId/:paraleloId/estudiantes',
+  builder: (_, state) {
+    final periodoId =
+        int.parse(state.pathParameters['periodoId']!);
+
+    final cursoId =
+        int.parse(state.pathParameters['cursoId']!);
+
+    final paraleloId =
+        int.parse(state.pathParameters['paraleloId']!);
+
+    final curso =
+        state.uri.queryParameters['curso'] ?? '';
+
+    final paralelo =
+        state.uri.queryParameters['paralelo'] ?? '';
+
+    return EstudiantesClaseScreen(
+      periodoId: periodoId,
+      cursoId: cursoId,
+      paraleloId: paraleloId,
+      cursoNombre: curso,
+      paraleloNombre: paralelo,
+    );
+  },
+), */
+GoRoute(
+  path: '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId',
+  builder: (_, state) {
+    final periodoId =
+        int.parse(state.pathParameters['periodoId']!);
+
+    final cursoId =
+        int.parse(state.pathParameters['cursoId']!);
+
+    final paraleloId =
+        int.parse(state.pathParameters['paraleloId']!);
+
+    final asignacionId =
+        int.parse(state.pathParameters['asignacionId']!);
+
+    return ClaseDashboardScreen(
+      periodoId: periodoId,
+      cursoId: cursoId,
+      paraleloId: paraleloId,
+      asignacionId: asignacionId,
+      curso: state.uri.queryParameters['curso'] ?? '',
+      paralelo: state.uri.queryParameters['paralelo'] ?? '',
+      materia: state.uri.queryParameters['materia'] ?? '',
+    );
+     },
+),
+GoRoute(
+  path:
+      '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/anecdotarios',
+  builder: (_, state) {
+    return AnecdotarioListScreen(
+      periodoId: int.parse(
+        state.pathParameters['periodoId']!,
+      ),
+      asignacionId: int.parse(
+        state.pathParameters['asignacionId']!,
+      ),
+    );
+  },
+),
+GoRoute(
+  path:
+      '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/anecdotarios/create',
+  builder: (_, state) {
+    return AnecdotarioCreateScreen(
+      periodoId:
+          int.parse(state.pathParameters['periodoId']!),
+      cursoId:
+          int.parse(state.pathParameters['cursoId']!),
+      paraleloId:
+          int.parse(state.pathParameters['paraleloId']!),
+      asignacionId:
+          int.parse(state.pathParameters['asignacionId']!),
+    );
+  },
+),  
         ],
       ),
     ],

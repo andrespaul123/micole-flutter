@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
 import '../../viewmodels/tenant_viewmodel.dart';
 import '../../core/widgest/auth_card.dart';
 import '../../core/widgest/auth_input.dart';
@@ -37,7 +38,9 @@ class _TenantScreenState extends State<TenantScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-      appBar: AppBar(title: const Text('Crear Colegio')),
+      appBar: AppBar(
+        title: const Text('Crear Colegio'),
+      ),
 
       body: Center(
         child: SingleChildScrollView(
@@ -50,13 +53,52 @@ class _TenantScreenState extends State<TenantScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+
+                    const Icon(
+                      Icons.school,
+                      size: 60,
+                      color: Colors.indigo,
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    const Text(
+                      'Crear Colegio',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    if (vm.error != null)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          vm.error!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+
                     AuthInput(
                       controller: nameController,
                       label: 'Nombre colegio',
                       icon: Icons.school,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
+
                     const SizedBox(height: 16),
 
                     AuthInput(
@@ -64,8 +106,11 @@ class _TenantScreenState extends State<TenantScreen> {
                       label: 'Slug',
                       icon: Icons.link,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
+
                     const SizedBox(height: 16),
 
                     AuthInput(
@@ -73,8 +118,11 @@ class _TenantScreenState extends State<TenantScreen> {
                       label: 'Nombre director',
                       icon: Icons.person,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
+
                     const SizedBox(height: 16),
 
                     AuthInput(
@@ -82,19 +130,25 @@ class _TenantScreenState extends State<TenantScreen> {
                       label: 'Email director',
                       icon: Icons.email,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
+
                     const SizedBox(height: 16),
 
                     AuthInput(
                       controller: passwordController,
-                      label: 'Password',
+                      label: 'Contraseña',
                       icon: Icons.lock,
                       obscure: true,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
-                    const SizedBox(height: 20),
+
+                    const SizedBox(height: 24),
 
                     SizedBox(
                       width: double.infinity,
@@ -102,34 +156,51 @@ class _TenantScreenState extends State<TenantScreen> {
                         onPressed: vm.creating
                             ? null
                             : () async {
-                                if (!_formKey.currentState!.validate()) return;
 
+                            /*     if (!_formKey.currentState!.validate()) {
+                                  return;
+                                }
+ */
                                 FocusScope.of(context).unfocus();
 
-                                final success = await vm.createTenant(
+                                final success =
+                                    await vm.createTenant(
                                   name: nameController.text.trim(),
                                   slug: slugController.text.trim(),
                                   directorName:
                                       directorNameController.text.trim(),
                                   directorEmail:
                                       directorEmailController.text.trim(),
-                                  password: passwordController.text.trim(),
+                                  password:
+                                      passwordController.text.trim(),
                                 );
 
                                 if (!mounted) return;
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      success
-                                          ? 'Colegio creado'
-                                          : 'Error al crear',
-                                    ),
-                                  ),
-                                );
-
                                 if (success) {
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Colegio creado correctamente',
+                                      ),
+                                    ),
+                                  );
+
                                   context.go('/colegios');
+
+                                } else {
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        vm.error ??
+                                            'Error al crear colegio',
+                                      ),
+                                    ),
+                                  );
                                 }
                               },
 

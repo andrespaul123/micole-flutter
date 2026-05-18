@@ -46,6 +46,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 16),
                 AuthInput(controller: passwordController, label: 'Contraseña', icon: Icons.lock,
                   obscure: true, validator: (v) => v!.isEmpty ? 'Campo requerido' : null),
+if (auth.loginError != null) ...[
+  const SizedBox(height: 10),
+
+  Text(
+    auth.loginError!,
+    style: const TextStyle(
+      color: Colors.red,
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+    ),
+    textAlign: TextAlign.center,
+  ),
+],
+
                 const SizedBox(height: 20),
 
                 SizedBox(

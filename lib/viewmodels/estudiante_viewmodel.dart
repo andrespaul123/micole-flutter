@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import '../models/estudiante.dart';
 import '../repository/estudiante_repository.dart';
+import '../core/utils/api_error_handler.dart';
 
 class EstudianteViewModel extends ChangeNotifier {
   final EstudianteRepository repository;
@@ -8,15 +10,28 @@ class EstudianteViewModel extends ChangeNotifier {
 
   bool loading = false;
   bool creating = false;
+  String? error;
   List<Estudiante> estudiantes = [];
 
   Future<void> loadEstudiantes() async {
     loading = true;
+    error = null;
     notifyListeners();
-    estudiantes = await repository.getEstudiantes();
+    try{
+        estudiantes = await repository.getEstudiantes();
+    
+   } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+  } catch (e) {
+
+    error = 'Error inesperado';
+
+  } finally {
     loading = false;
     notifyListeners();
-  }
+  }}
 
   Future<bool> createEstudiante({
     required String name,
@@ -27,21 +42,25 @@ class EstudianteViewModel extends ChangeNotifier {
     if (creating) return false; 
 
     creating = true;
+    error = null;
     notifyListeners();
 
     try{
-      final success = await repository.createEstudiante(
+      final estudiante = await repository.createEstudiante(
         name: name,
         email: email,
         password: password,
         codigo: codigo,
       );
+      estudiantes.add(estudiante);
+      return true;
+    } on DioException catch (e) {
+      error = ApiErrorHandler.handle(e);
+      return false;
+    } catch (e) {
+      error = 'Error inesperado';
 
-      if (success) {
-        await loadEstudiantes(); 
-      }
-
-      return success;
+      return false;
     } finally {
       creating = false;
       notifyListeners();
@@ -51,11 +70,28 @@ class EstudianteViewModel extends ChangeNotifier {
 
   Future<bool> deleteEstudiante(int id) async {
     loading = true;
+      error = null;
     notifyListeners();
-    final success = await repository.deleteEstudiante(id);
-    if (success) await loadEstudiantes();
+    try{
+      await repository.deleteEstudiante(id);
+
+  estudiantes.removeWhere((e) => e.id == id);
+  return true;
+
+   } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+    return false;
+
+  } catch (e) {
+
+    error = 'Error inesperado';
+
+    return false;
+  } finally {
     loading = false;
     notifyListeners();
-    return success;
   }
-}
+  }
+}  

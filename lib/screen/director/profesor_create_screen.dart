@@ -37,17 +37,24 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-      appBar: AppBar(title: const Text('Crear Profesor')),
 
-      body: vm.loading
-          ? const Center(child: CircularProgressIndicator())
-          : AuthCard(
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: AuthCard(
               child: Form(
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.person, size: 60, color: Colors.blue),
+                    const Icon(
+                      Icons.person,
+                      size: 60,
+                      color: Colors.blue,
+                    ),
+
                     const SizedBox(height: 10),
 
                     const Text(
@@ -65,7 +72,9 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
                       label: 'Nombre',
                       icon: Icons.person,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Campo requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
 
                     const SizedBox(height: 16),
@@ -75,7 +84,9 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
                       label: 'Email',
                       icon: Icons.email,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Campo requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
 
                     const SizedBox(height: 16),
@@ -86,7 +97,9 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
                       icon: Icons.lock,
                       obscure: true,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Campo requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
 
                     const SizedBox(height: 16),
@@ -96,7 +109,9 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
                       label: 'Código Profesor',
                       icon: Icons.badge,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Campo requerido' : null,
+                          v == null || v.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                     ),
 
                     const SizedBox(height: 16),
@@ -108,6 +123,19 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
                       validator: (_) => null,
                     ),
 
+                    // 🔥 ERROR DEL VM
+                    if (vm.error != null) ...[
+                      const SizedBox(height: 10),
+
+                      Text(
+                        vm.error!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+
                     const SizedBox(height: 20),
 
                     SizedBox(
@@ -116,32 +144,42 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
                         onPressed: vm.creating
                             ? null
                             : () async {
-                                if (!_formKey.currentState!.validate()) return;
+                                if (!_formKey.currentState!.validate()) {
+                                  return;
+                                }
 
-                                final success = await vm.createProfesor(
+                                FocusScope.of(context).unfocus();
+
+                                final success =
+                                    await vm.createProfesor(
                                   name: nameController.text.trim(),
                                   email: emailController.text.trim(),
-                                  password: passwordController.text.trim(),
-                                  codigo: codigoController.text.trim(),
+                                  password:
+                                      passwordController.text.trim(),
+                                  codigo:
+                                      codigoController.text.trim(),
                                   especialidad:
-                                      especialidadController.text.trim().isEmpty
+                                      especialidadController
+                                              .text
+                                              .trim()
+                                              .isEmpty
                                           ? null
-                                          : especialidadController.text.trim(),
+                                          : especialidadController.text
+                                              .trim(),
                                 );
 
                                 if (!mounted) return;
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      success
-                                          ? 'Profesor creado correctamente'
-                                          : 'Error al crear profesor',
-                                    ),
-                                  ),
-                                );
-
                                 if (success) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Profesor creado correctamente',
+                                      ),
+                                    ),
+                                  );
+
                                   context.go('/profesores');
                                 }
                               },
@@ -162,6 +200,9 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
                 ),
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 }

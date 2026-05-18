@@ -1,43 +1,72 @@
 import 'package:flutter/material.dart';
-import 'package:front_colegio/models/academic_period.dart';
+import 'package:dio/dio.dart';
+
 import '../models/asignacion.dart';
-import '../repository/asignacion_repository.dart';
-import '../repository/academic_period_repository.dart';
+import '../models/academic_period.dart';
 import '../models/horario_curso.dart';
 import '../models/mi_clase.dart';
 
+import '../repository/asignacion_repository.dart';
+import '../repository/academic_period_repository.dart';
+
+import '../core/utils/api_error_handler.dart';
 
 class AsignacionViewModel extends ChangeNotifier {
   final AsignacionRepository repository;
   final AcademicPeriodRepository periodoRepository;
 
-  AsignacionViewModel({required this.repository, required this.periodoRepository});
+  AsignacionViewModel({
+    required this.repository,
+    required this.periodoRepository,
+  });
 
   bool loading = false;
   bool creating = false;
-
-  Map<String, List<Asignacion>> horario = {};
-  AcademicPeriod? periodoActivo;
-  List<MiClase> misClases = [];
-  List<AcademicPeriod> periodosProfesor = [];
-  AcademicPeriod? periodoSeleccionadoClases;
+  bool loadingCurso = false;
   bool loadingClases = false;
 
-   Future<void> loadPeriodo() async {
-    periodoActivo = await periodoRepository.getPeriodoActivo();
-    notifyListeners();
+  String? error;
+
+  AcademicPeriod? periodoActivo;
+
+  Map<String, List<Asignacion>> horario = {};
+  Map<String, List<HorarioItem>> horarioCurso = {};
+
+  List<MiClase> misClases = [];
+
+  List<AcademicPeriod> periodosProfesor = [];
+
+  AcademicPeriod? periodoSeleccionadoClases;
+
+  Future<void> loadPeriodo() async {
+    try {
+      periodoActivo =
+          await periodoRepository.getPeriodoActivo();
+
+      notifyListeners();
+    } catch (_) {}
   }
 
   Future<void> loadHorario(int profesorId) async {
     loading = true;
+    error = null;
+
     notifyListeners();
 
-    horario = await repository.getHorario(profesorId);
-
-    loading = false;
-    notifyListeners();
+    try {
+      horario =
+          await repository.getHorario(profesorId);
+    } on DioException catch (e) {
+      error = ApiErrorHandler.handle(e);
+    } catch (_) {
+      error = 'Error inesperado';
+    } finally {
+      loading = false;
+      notifyListeners();
+    }
   }
-Future<String?> crearAsignacion({
+
+  Future<bool> crearAsignacion({
     required int profesorId,
     required int subjectId,
     required int cursoId,
@@ -46,23 +75,24 @@ Future<String?> crearAsignacion({
     required String horaInicio,
     required String horaFin,
   }) async {
-    if (creating) return "Ya se está creando una asignación";
+    if (creating) return false;
 
     creating = true;
+    error = null;
+
     notifyListeners();
 
     try {
-      // 🔥 cargar periodo si no existe
       if (periodoActivo == null) {
         await loadPeriodo();
       }
 
-      // 🔥 VALIDACIÓN IMPORTANTE
-      if (periodoActivo == null || periodoActivo!.id == null) {
-        return "No hay periodo académico activo";
+      if (periodoActivo?.id == null) {
+        error = 'No hay periodo académico activo';
+        return false;
       }
 
-      final error = await repository.crearAsignacion(
+      await repository.crearAsignacion(
         periodoId: periodoActivo!.id!,
         profesorId: profesorId,
         subjectId: subjectId,
@@ -73,127 +103,117 @@ Future<String?> crearAsignacion({
         horaFin: horaFin,
       );
 
-      if (error == null) {
-        await loadHorario(profesorId);
-      }
+      await loadHorario(profesorId);
 
-      return error;
+      return true;
+    } on DioException catch (e) {
+      error = ApiErrorHandler.handle(e);
+
+      return false;
+    } catch (_) {
+      error = 'Error inesperado';
+
+      return false;
     } finally {
       creating = false;
       notifyListeners();
     }
   }
 
-  Map<String, List<HorarioItem>> horarioCurso = {};
-bool loadingCurso = false;
+  Future<void> loadHorarioCurso({
+    required int cursoId,
+    required int paraleloId,
+  }) async {
+    loadingCurso = true;
+    error = null;
 
-/* Future<void> loadHorarioCurso({
-  required int periodoId,
-  required int cursoId,
-  required int paraleloId,
-}) async {
-  loadingCurso = true;
-  notifyListeners();
-
-  horarioCurso = await repository.getHorarioCurso(
-    periodoId:  periodoId,
-    cursoId:    cursoId,
-    paraleloId: paraleloId,
-  );
-
-  loadingCurso = false;
-  notifyListeners();
-}
-} */
-/* Future<void> loadHorarioCurso({
-  required int cursoId,
-  required int paraleloId,
-}) async {
-  loadingCurso = true;
-  notifyListeners();
-
-  // 🔥 ASEGURAR PERIODO
-  if (periodoActivo == null) {
-    await loadPeriodo();
-  }
-
-  if (periodoActivo == null) {
-    horarioCurso = {};
-    loadingCurso = false;
     notifyListeners();
-    return;
+
+    try {
+      if (periodoActivo == null) {
+        await loadPeriodo();
+      }
+
+      if (periodoActivo == null) {
+        horarioCurso = {};
+        return;
+      }
+
+      horarioCurso =
+          await repository.getHorarioCurso(
+        periodoId: periodoActivo!.id!,
+        cursoId: cursoId,
+        paraleloId: paraleloId,
+      );
+    } on DioException catch (e) {
+      error = ApiErrorHandler.handle(e);
+    } catch (_) {
+      error = 'Error inesperado';
+    } finally {
+      loadingCurso = false;
+      notifyListeners();
+    }
   }
 
-  horarioCurso = await repository.getHorarioCurso(
-    periodoId:  periodoActivo!.id!,
-    cursoId:    cursoId,
-    paraleloId: paraleloId,
-  );
+  Future<void> loadPeriodosYClases() async {
+    loadingClases = true;
+    error = null;
 
-  loadingCurso = false;
-  notifyListeners();
-} */
-Future<void> loadHorarioCurso({
-  required int cursoId,
-  required int paraleloId,
-}) async {
-  loadingCurso = true;
-  notifyListeners();
-
-  // 🔥 asegurar periodo
-  if (periodoActivo == null) {
-    await loadPeriodo();
-  }
-
-  // 🔥 si no hay periodo → limpiar y salir
-  if (periodoActivo == null) {
-    horarioCurso = {};
-    loadingCurso = false;
     notifyListeners();
-    return;
+
+    try {
+      periodosProfesor =
+          await periodoRepository.getPeriodos();
+
+      if (periodosProfesor.isNotEmpty) {
+        periodoSeleccionadoClases =
+            periodosProfesor.firstWhere(
+          (p) => p.activo == true,
+          orElse: () => periodosProfesor.first,
+        );
+
+        await _cargarMisClases();
+      }
+    } on DioException catch (e) {
+      error = ApiErrorHandler.handle(e);
+    } catch (_) {
+      error = 'Error inesperado';
+    } finally {
+      loadingClases = false;
+      notifyListeners();
+    }
   }
 
-  horarioCurso = await repository.getHorarioCurso(
-    periodoId: periodoActivo!.id!,
-    cursoId: cursoId,
-    paraleloId: paraleloId,
-  );
+  Future<void> cambiarPeriodoClases(
+    AcademicPeriod periodo,
+  ) async {
+    periodoSeleccionadoClases = periodo;
 
-  loadingCurso = false;
-  notifyListeners();
-}
+    misClases = [];
 
-Future<void> loadPeriodosYClases() async {
-  loadingClases = true;
-  notifyListeners();
+    notifyListeners();
 
-  periodosProfesor = await periodoRepository.getPeriodos();
-
-  if (periodosProfesor.isNotEmpty) {
-    periodoSeleccionadoClases = periodosProfesor.firstWhere(
-      (p) => p.activo == true,
-      orElse: () => periodosProfesor.first,
-    );
     await _cargarMisClases();
-  } else {
-    loadingClases = false;
-    notifyListeners();
   }
-}
-Future<void> cambiarPeriodoClases(AcademicPeriod periodo) async {
-  periodoSeleccionadoClases = periodo;
-  misClases = [];
-  notifyListeners();
-  await _cargarMisClases();
-}
 
-Future<void> _cargarMisClases() async {
-  if (periodoSeleccionadoClases?.id == null) return;
-  loadingClases = true;
-  notifyListeners();
-  misClases = await repository.getMisClases(
-      periodoSeleccionadoClases!.id!);
-  loadingClases = false;
-  notifyListeners();
-}
+  Future<void> _cargarMisClases() async {
+    if (periodoSeleccionadoClases?.id == null) return;
+
+    loadingClases = true;
+
+    notifyListeners();
+
+    try {
+      misClases = await repository.getMisClases(
+        periodoSeleccionadoClases!.id!,
+      );
+    } on DioException catch (e) {
+      error = ApiErrorHandler.handle(e);
+    } catch (_) {
+      error = 'Error inesperado';
+    } finally {
+      loadingClases = false;
+      notifyListeners();
+    }
+  }
 }

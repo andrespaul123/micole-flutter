@@ -7,72 +7,61 @@ class ProfesorRepository {
 
   ProfesorRepository(this._dio);
 
-  // 🔥 LISTAR
   Future<List<Profesor>> getProfesores() async {
-    try {
-      final response = await _dio.get('/profesores');
 
-      return (response.data as List)
-          .map((e) => Profesor.fromJson(e))
-          .toList();
-    } catch (e) {
-      if (e is DioException) {
-        print("ERROR PROFESORES: ${e.response?.data}");
-      }
-      return [];
-    }
+    final response = await _dio.get('/profesores');
+
+    return (response.data as List)
+        .map((e) => Profesor.fromJson(e))
+        .toList();
   }
-  //materias de un profesor
-  Future<List<Subject>> getSubjectsByProfesor(int profesorId) async {
-  try {
-    final response = await _dio.get('/profesores/$profesorId/subjects');
 
-    final List data = response.data['data']; 
+  // materias de un profesor
+  Future<List<Subject>> getSubjectsByProfesor(
+    int profesorId,
+  ) async {
+
+    final response =
+        await _dio.get('/profesores/$profesorId/subjects');
+
+    final List data = response.data['data'];
+
     return data
         .map((e) => Subject.fromJson(e))
         .toList();
-  } catch (e) {
-    if (e is DioException) {
-      print("ERROR SUBJECTS PROFESOR: ${e.response?.data}");
-    }
-    return [];
   }
-}
 
-  // 🔥 CREAR
-  Future<bool> createProfesor({
+  // CREAR
+  Future<Profesor> createProfesor({
     required String name,
     required String email,
     required String password,
     required String codigo,
     String? especialidad,
   }) async {
-    try {
-      await _dio.post(
-        '/profesores',
-        data: {
-          'name': name,
-          'email': email,
-          'password': password,
-          'codigo_profesor': codigo,
-          'especialidad': especialidad,
-        },
-      );
 
-      return true;
-    } catch (e) {
-      if (e is DioException) {
-        print("ERROR CREATE PROFESOR: ${e.response?.data}");
-      }
-      return false;
-    }
+    final response = await _dio.post(
+      '/profesores',
+      data: {
+        'name': name,
+        'email': email,
+        'password': password,
+        'codigo_profesor': codigo,
+        'especialidad': especialidad,
+      },
+    );
+
+    return Profesor.fromJson(
+      response.data['data'],
+    );
   }
 
-  Future<bool> asignarMateria({
-  required int profesorId,
-  required int subjectId,
-}) async {
-  try {
+  // ASIGNAR MATERIA
+  Future<void> asignarMateria({
+    required int profesorId,
+    required int subjectId,
+  }) async {
+
     await _dio.post(
       '/profesores/asignar-materia',
       data: {
@@ -80,25 +69,11 @@ class ProfesorRepository {
         'subject_id': subjectId,
       },
     );
-
-    return true;
-  } catch (e) {
-    if (e is DioException) {
-      print("ERROR ASIGNAR: ${e.response?.data}");
-    }
-    return false;
   }
-}
 
-Future<bool> deleteProfesor(int id) async {
-    try {
-      await _dio.delete('/profesores/$id');
-      return true;
-    } catch (e) {
-      if (e is DioException) {
-        print("ERROR DELETE PROFESOR: ${e.response?.data}");
-      }
-      return false;
-    }
+  // ELIMINAR
+  Future<void> deleteProfesor(int id) async {
+
+    await _dio.delete('/profesores/$id');
   }
 }

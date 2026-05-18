@@ -206,6 +206,17 @@ class _InscripcionCreateScreenState extends State<InscripcionCreateScreen> {
                                     setState(() => _paraleloSelected = p),
                           ),
 
+                    if (inscripcionVM.error != null) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        inscripcionVM.error!,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+
                     const SizedBox(height: 28),
 
                     // Botón inscribir
@@ -237,7 +248,7 @@ class _InscripcionCreateScreenState extends State<InscripcionCreateScreen> {
 
                                 FocusScope.of(context).unfocus();
 
-                                final err = await context
+                                final success = await context
                                     .read<InscripcionViewModel>()
                                     .createInscripcion(
                                       periodoId: periodoActivo.id!,
@@ -249,17 +260,15 @@ class _InscripcionCreateScreenState extends State<InscripcionCreateScreen> {
 
                                 if (!mounted) return;
 
-                                if (err == null) {
+                                if (success) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content: Text(
-                                            'Estudiante inscrito correctamente')),
+                                      content: Text(
+                                        'Estudiante inscrito correctamente',
+                                      ),
+                                    ),
                                   );
                                   context.go('/inscripciones');
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(err)),
-                                  );
                                 }
                               },
                         child: inscripcionVM.creating

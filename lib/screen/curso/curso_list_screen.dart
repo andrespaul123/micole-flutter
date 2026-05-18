@@ -83,6 +83,16 @@ class _CursoListScreenState extends State<CursoListScreen> {
           Expanded(
             child: vm.loading
                 ? const Center(child: CircularProgressIndicator())
+                 : vm.error != null
+        ? Center(
+            child: Text(
+              vm.error!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
                 : vm.cursos.isEmpty
                     ? const Center(child: Text('No hay cursos en este periodo'))
                     : ListView.builder(

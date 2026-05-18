@@ -100,6 +100,17 @@ class _ParaleloCreateScreenState extends State<ParaleloCreateScreen> {
                             icon: Icons.people,
                             validator: (_) => null,
                           ),
+                          if (vm.error != null) ...[
+  const SizedBox(height: 10),
+
+  Text(
+    vm.error!,
+    style: const TextStyle(
+      color: Colors.red,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+],
 
                           const SizedBox(height: 20),
 
@@ -144,8 +155,8 @@ class _ParaleloCreateScreenState extends State<ParaleloCreateScreen> {
                                   );
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Error al crear'),
+                                     SnackBar(
+                                      content: Text(vm.error ?? 'Error al crear'),
                                     ),
                                   );
                                 }

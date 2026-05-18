@@ -71,6 +71,17 @@ class _CursoCreateScreenState extends State<CursoCreateScreen> {
                       icon: Icons.notes,
                       validator: (_) => null,
                     ),
+                    if (vm.error != null) ...[
+  const SizedBox(height: 10),
+
+  Text(
+    vm.error!,
+    style: const TextStyle(
+      color: Colors.red,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+],
                     const SizedBox(height: 20),
 
                     SizedBox(
@@ -101,13 +112,7 @@ class _CursoCreateScreenState extends State<CursoCreateScreen> {
                                   );
 
                                   context.go('/cursos');
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Error al crear'),
-                                    ),
-                                  );
-                                }
+                                } 
                               },
 
                         // 🔥 loader solo en botón

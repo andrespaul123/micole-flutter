@@ -111,7 +111,17 @@ class _CircularCreateScreenState extends State<CircularCreateScreen> {
                 ),
                 validator: (v) => v!.isEmpty ? 'Campo requerido' : null,
               ),
+              if (vm.error != null) ...[
+  const SizedBox(height: 12),
 
+  Text(
+    vm.error!,
+    style: const TextStyle(
+      color: Colors.red,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+],
               const SizedBox(height: 32),
 
               // ── Botón ─────────────────────────────────────────────────
@@ -140,10 +150,10 @@ class _CircularCreateScreenState extends State<CircularCreateScreen> {
                           if (!mounted) return;
 
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(success
+                            content: Text(success 
                                 ? 'Circular enviada correctamente'
-                                : 'Error al crear'),
-                          ));
+                                : (vm.error ?? 'Error al crear')
+                          ) ));
 
                           if (success) context.go('/circulares');
                         },

@@ -47,8 +47,19 @@ class _SubjectScreenState extends State<SubjectScreen> {
                       controller: nameController,
                       label: 'Nombre de la materia',
                       icon: Icons.menu_book,
-                      validator: (v) => v!.isEmpty ? 'Campo requerido' : null,
+                       validator: (v) => v!.isEmpty ? 'Campo requerido' : null, 
                     ),
+                    if (vm.error != null) ...[
+  const SizedBox(height: 10),
+
+  Text(
+    vm.error!,
+    style: const TextStyle(
+      color: Colors.red,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+],
 
                     const SizedBox(height: 30),
 
@@ -58,9 +69,9 @@ class _SubjectScreenState extends State<SubjectScreen> {
                         onPressed: vm.creating
                             ? null
                             : () async {
-                                if (!_formKey.currentState!.validate()) return;
+                                 if (!_formKey.currentState!.validate()) return; 
 
-                                FocusScope.of(context).unfocus(); // 🔥 UX pro
+                                FocusScope.of(context).unfocus(); 
 
                                 final success = await vm.createSubject(
                                   nameController.text.trim(),
@@ -76,13 +87,13 @@ class _SubjectScreenState extends State<SubjectScreen> {
                                   );
 
                                   context.go('/materias'); // 🔥 navegación limpia
-                                } else {
+                                } /* else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Error al crear'),
                                     ),
                                   );
-                                }
+                                } */
                               },
 
                         child: vm.creating

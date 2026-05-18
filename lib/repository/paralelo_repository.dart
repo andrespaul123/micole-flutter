@@ -7,52 +7,21 @@ class ParaleloRepository {
   ParaleloRepository(this._dio);
 
   Future<List<Paralelo>> getParalelos() async {
-    try {
-      final response = await _dio.get('/paralelos');
-      return (response.data as List)
-          .map((e) => Paralelo.fromJson(e))
-          .toList();
-    } catch (e) {
-      if (e is DioException) {
-        print("ERROR GET PARALELOS: ${e.response?.data}");
-      }
-      return [];
-    }
+    final response = await _dio.get('/paralelos');
+
+    return (response.data as List)
+        .map((e) => Paralelo.fromJson(e))
+        .toList();
   }
 
-  /* Future<bool> createParalelo({
+  Future<Paralelo> createParalelo({
     required int cursoId,
     required String nombre,
     String? turno,
     int? capacidad,
   }) async {
-    try {
-      await _dio.post(
-        '/paralelos',
-        data: {
-          'curso_id': cursoId,
-          'nombre': nombre,
-          'turno': turno,
-          'capacidad': capacidad,
-        },
-      );
-  
-      return true; 
-    } catch (e) {
-      if (e is DioException) {
-        print("ERROR CREATE PARALELO: ${e.response?.data}");
-      }
-      return false;
-    }
-  } */
- Future<Paralelo?> createParalelo({
-  required int cursoId,
-  required String nombre,
-  String? turno,
-  int? capacidad,
-}) async {
-  try {
-    final response = await _dio.post( 
+
+    final response = await _dio.post(
       '/paralelos',
       data: {
         'curso_id': cursoId,
@@ -62,40 +31,26 @@ class ParaleloRepository {
       },
     );
 
-    return Paralelo.fromJson(response.data); 
-  } catch (e) {
-    if (e is DioException) {
-      print("ERROR CREATE PARALELO: ${e.response?.data}");
-    }
-    return null;
+    return Paralelo.fromJson(response.data);
   }
-}
 
-  Future<bool> deleteParalelo(int id) async {
-    try {
-      await _dio.delete('/paralelos/$id');
-      return true;
-    } catch (e) {
-      if (e is DioException) {
-        print("ERROR DELETE PARALELO: ${e.response?.data}");
-      }
-      return false;
-    }
+  Future<void> deleteParalelo(int id) async {
+    await _dio.delete('/paralelos/$id');
   }
- Future<List<Paralelo>> getParalelosByCurso(int periodoId, int cursoId) async {
-  try {
+
+  Future<List<Paralelo>> getParalelosByCurso(
+    int periodoId,
+    int cursoId,
+  ) async {
+
     final response = await _dio.get(
       '/periodos/$periodoId/cursos/$cursoId/paralelos',
     );
 
-    final List data = response.data['data']; // 🔥 IMPORTANTE
+    final List data = response.data['data'];
 
-    return data.map((e) => Paralelo.fromJson(e)).toList();
-  } catch (e) {
-    if (e is DioException) {
-      print("ERROR GET PARALELOS CURSO: ${e.response?.data}");
-    }
-    return [];
+    return data
+        .map((e) => Paralelo.fromJson(e))
+        .toList();
   }
-}
 }
