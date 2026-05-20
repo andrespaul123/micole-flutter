@@ -6,9 +6,6 @@ class AsistenciaRepository {
 
   AsistenciaRepository(this._dio);
 
-  // =========================================
-  // REGISTRAR ASISTENCIA
-  // =========================================
   Future<void> registrarAsistencia({
     required int periodoId,
     required int asignacionId,
@@ -25,9 +22,6 @@ class AsistenciaRepository {
     );
   }
 
-  // =========================================
-  // OBTENER ASISTENCIA POR FECHA
-  // =========================================
   Future<Asistencia> obtenerAsistencia({
     required int periodoId,
     required int asignacionId,
@@ -40,9 +34,7 @@ class AsistenciaRepository {
     return Asistencia.fromJson(response.data);
   }
 
-  // =========================================
-  // LISTAR ASISTENCIAS
-  // =========================================
+
   Future<List<Asistencia>> listarAsistencias({
     required int periodoId,
     required int asignacionId,
@@ -58,9 +50,7 @@ class AsistenciaRepository {
         .toList();
   }
 
-  // =========================================
-  // ACTUALIZAR ASISTENCIA
-  // =========================================
+ 
   Future<void> actualizarAsistencia({
     required int asistenciaId,
     required List<AsistenciaDetalle> asistencias,

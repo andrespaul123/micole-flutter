@@ -359,6 +359,7 @@ class _MainLayoutState extends State<MainLayout> {
           _MenuItem('Inicio', Icons.home_outlined, '/home'),
            _MenuItem('Mis Clases', Icons.class_outlined, '/mis-clases'),
           _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
+          _MenuItem('Agenda', Icons.event_note_outlined, '/agenda'),
         ];
 
       case 'estudiante':

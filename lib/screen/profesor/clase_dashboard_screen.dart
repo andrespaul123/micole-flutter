@@ -110,6 +110,25 @@ SizedBox(
     label: const Text('Tomar Asistencia'),
   ),
 ),
+const SizedBox(height: 14),
+
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton.icon(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.indigo,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 14),
+    ),
+    onPressed: () {
+      context.go(
+        '/mis-clases/$periodoId/$cursoId/$paraleloId/$asignacionId/agendas',
+      );
+    },
+    icon: const Icon(Icons.event_note),
+    label: const Text('Ver Agenda'),
+  ),
+),
                   ],
                 ),
               ),

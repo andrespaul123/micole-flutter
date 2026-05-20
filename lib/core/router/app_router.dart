@@ -32,10 +32,15 @@ import '../../screen/circular/circular_detail_screen.dart';
 import '../../screen/inscripcion/inscripcion_create_screen.dart';
 import '../../screen/inscripcion/inscripcion_list_screen.dart';
 import '../../screen/profesor/mis_clases_screen.dart';
-import '../../screen/profesor/estudiantes_clase_screen.dart';
 import '../../screen/profesor/clase_dashboard_screen.dart';
 import '../../screen/profesor/anecdotario_list_screen.dart';
 import '../../screen/profesor/anecdotario_create_screen.dart';
+import '../../screen/profesor/asistencia_create_screen.dart';
+import '../../screen/agenda/agenda_list_screen.dart';
+import '../../screen/agenda/agenda_create_screen.dart';
+import '../../screen/agenda/agenda_detail_screen.dart';
+
+
 
 // Super Admin
 import '../../screen/tenant/tenant_list_screen.dart';
@@ -350,7 +355,118 @@ GoRoute(
           int.parse(state.pathParameters['asignacionId']!),
     );
   },
-),  
+), 
+GoRoute(
+  path:
+      '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/asistencia',
+  builder: (_, state) {
+    return AsistenciaCreateScreen(
+      periodoId:
+          int.parse(state.pathParameters['periodoId']!),
+      cursoId:
+          int.parse(state.pathParameters['cursoId']!),
+      paraleloId:
+          int.parse(state.pathParameters['paraleloId']!),
+      asignacionId:
+          int.parse(state.pathParameters['asignacionId']!),
+    );
+  },
+),
+// Agendas
+GoRoute(
+  path:
+      '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/agendas',
+  builder: (_, state) {
+    return AgendaListScreen(
+      periodoId:
+          int.parse(state.pathParameters['periodoId']!),
+      cursoId:
+          int.parse(state.pathParameters['cursoId']!),
+      paraleloId:
+          int.parse(state.pathParameters['paraleloId']!),
+      asignacionId:
+          int.parse(state.pathParameters['asignacionId']!),
+    );
+  },
+   routes: [
+
+    // CREAR AGENDA
+    GoRoute(
+      path: 'create',
+
+      builder: (_, state) {
+        return AgendaCreateScreen(
+          periodoId:
+              int.parse(
+                state.pathParameters['periodoId']!,
+              ),
+
+          asignacionId:
+              int.parse(
+                state.pathParameters['asignacionId']!,
+              ),
+          cursoId:
+              int.parse(
+                state.pathParameters['cursoId']!,
+              ),
+          paraleloId:
+              int.parse(
+                state.pathParameters['paraleloId']!,
+              ),
+        );
+      },
+    ),
+
+    // DETALLE AGENDA
+    /* GoRoute(
+      path: ':agendaId',
+
+      builder: (_, state) {
+        return AgendaDetailScreen(
+
+          periodoId:
+              int.parse(
+                state.pathParameters['periodoId']!,
+              ),
+
+          cursoId:
+              int.parse(
+                state.pathParameters['cursoId']!,
+              ),
+
+          paraleloId:
+              int.parse(
+                state.pathParameters['paraleloId']!,
+              ),
+
+          asignacionId:
+              int.parse(
+                state.pathParameters['asignacionId']!,
+              ),
+
+          agendaId:
+              int.parse(
+                state.pathParameters['agendaId']!,
+              ),
+        );
+      },
+    ), */
+    GoRoute(
+  path: ':agendaId',
+
+  builder: (_, state) {
+
+    return AgendaDetailScreen(
+
+      agendaId:
+          int.parse(
+            state.pathParameters['agendaId']!,
+          ),
+    );
+  },
+),
+  ],
+),
         ],
       ),
     ],

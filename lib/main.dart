@@ -19,7 +19,7 @@ import 'repository/circular_repository.dart';
 import 'repository/inscripcion_repository.dart';
 import 'repository/anecdotario_repository.dart';
 import 'repository/asistencia_repository.dart';
-
+import 'repository/agenda_repository.dart';
 // ViewModels
 import 'viewmodels/auth_viewmodel.dart';
 import 'viewmodels/tenant_viewmodel.dart';
@@ -37,6 +37,7 @@ import 'viewmodels/inscripcion_viewmodel.dart';
 import 'viewmodels/estudiantes_clase_viewmodel.dart';
 import 'viewmodels/anecdotario_viewmodel.dart';
 import 'viewmodels/asistencia_viewmodel.dart';
+import 'viewmodels/agenda_viewmodel.dart';  
 
 
 void main() async {
@@ -142,6 +143,13 @@ ChangeNotifierProvider(
 ChangeNotifierProvider(
   create: (_) => AsistenciaViewModel(
     repository: AsistenciaRepository(dio),
+  ),
+),
+ChangeNotifierProvider(
+  create: (_) => AgendaViewModel(
+    repository: AgendaRepository(
+      dio,
+    ),
   ),
 ),
       ],

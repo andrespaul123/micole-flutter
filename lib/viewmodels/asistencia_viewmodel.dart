@@ -21,9 +21,7 @@ class AsistenciaViewModel extends ChangeNotifier {
 
   List<Asistencia> asistencias = [];
 
-  // =====================================
-  // REGISTRAR
-  // =====================================
+ 
   Future<bool> registrarAsistencia({
     required int periodoId,
     required int asignacionId,
@@ -56,9 +54,6 @@ class AsistenciaViewModel extends ChangeNotifier {
     }
   }
 
-  // =====================================
-  // OBTENER POR FECHA
-  // =====================================
   Future<void> obtenerAsistencia({
     required int periodoId,
     required int asignacionId,
@@ -85,9 +80,7 @@ class AsistenciaViewModel extends ChangeNotifier {
     }
   }
 
-  // =====================================
-  // LISTAR
-  // =====================================
+ 
   Future<void> listarAsistencias({
     required int periodoId,
     required int asignacionId,
@@ -112,9 +105,7 @@ class AsistenciaViewModel extends ChangeNotifier {
     }
   }
 
-  // =====================================
-  // ACTUALIZAR
-  // =====================================
+  
   Future<bool> actualizarAsistencia({
     required int asistenciaId,
     required List<AsistenciaDetalle> asistencias,
