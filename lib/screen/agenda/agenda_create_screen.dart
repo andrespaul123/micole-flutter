@@ -1,3 +1,6 @@
+// agenda_create_screen.dart
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +37,9 @@ class _AgendaCreateScreenState
 
   String tipo = 'tarea';
 
+  // 🔥 archivos seleccionados
+  List<PlatformFile> archivos = [];
+
   @override
   void dispose() {
     tituloCtrl.dispose();
@@ -43,28 +49,56 @@ class _AgendaCreateScreenState
     super.dispose();
   }
 
+  // ======================================
+  // SELECCIONAR ARCHIVOS
+  // ======================================
+
+  Future<void> seleccionarArchivos() async {
+
+    final result =
+        await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      withData: true,
+    );
+
+    if (result == null) return;
+
+    setState(() {
+
+      archivos = result.files;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<AgendaViewModel>();
+
+    final vm =
+        context.watch<AgendaViewModel>();
 
     return Scaffold(
 
-      // 🔥 quita flecha atrás
       appBar: AppBar(
         automaticallyImplyLeading: false,
+
         title: const Text(
           'Crear Agenda',
         ),
       ),
 
       body: SingleChildScrollView(
+
         padding: const EdgeInsets.all(20),
 
         child: Form(
+
           key: _formKey,
 
           child: Column(
             children: [
+
+              // ======================================
+              // TITULO
+              // ======================================
 
               TextFormField(
                 controller: tituloCtrl,
@@ -74,6 +108,7 @@ class _AgendaCreateScreenState
                 ),
 
                 validator: (v) {
+
                   if (v == null || v.isEmpty) {
                     return 'Campo requerido';
                   }
@@ -84,6 +119,10 @@ class _AgendaCreateScreenState
 
               const SizedBox(height: 16),
 
+              // ======================================
+              // TIPO
+              // ======================================
+
               DropdownButtonFormField<String>(
                 value: tipo,
 
@@ -92,6 +131,7 @@ class _AgendaCreateScreenState
                 ),
 
                 items: const [
+
                   DropdownMenuItem(
                     value: 'tarea',
                     child: Text('Tarea'),
@@ -109,6 +149,7 @@ class _AgendaCreateScreenState
                 ],
 
                 onChanged: (v) {
+
                   setState(() {
                     tipo = v!;
                   });
@@ -117,8 +158,13 @@ class _AgendaCreateScreenState
 
               const SizedBox(height: 16),
 
+              // ======================================
+              // DESCRIPCION
+              // ======================================
+
               TextFormField(
                 controller: descripcionCtrl,
+
                 maxLines: 5,
 
                 decoration: const InputDecoration(
@@ -128,13 +174,19 @@ class _AgendaCreateScreenState
 
               const SizedBox(height: 16),
 
+              // ======================================
+              // FECHA
+              // ======================================
+
               TextFormField(
                 controller: fechaCtrl,
+
                 readOnly: true,
 
                 decoration: const InputDecoration(
                   labelText: 'Fecha de entrega',
                   hintText: 'YYYY-MM-DD',
+
                   suffixIcon: Icon(
                     Icons.calendar_today,
                   ),
@@ -151,6 +203,7 @@ class _AgendaCreateScreenState
                   );
 
                   if (date != null) {
+
                     fechaCtrl.text =
                         date
                             .toString()
@@ -160,11 +213,85 @@ class _AgendaCreateScreenState
                 },
               ),
 
+              const SizedBox(height: 20),
+
+              // ======================================
+              // BOTON SELECCIONAR ARCHIVOS
+              // ======================================
+
+              SizedBox(
+                width: double.infinity,
+
+                child: OutlinedButton.icon(
+
+                  onPressed: seleccionarArchivos,
+
+                  icon: const Icon(
+                    Icons.attach_file,
+                  ),
+
+                  label: const Text(
+                    'Seleccionar archivos',
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // ======================================
+              // LISTA ARCHIVOS
+              // ======================================
+
+              if (archivos.isNotEmpty)
+
+                Column(
+
+                  children:
+                      archivos.map((file) {
+
+                    return Card(
+
+                      child: ListTile(
+
+                        leading: const Icon(
+                          Icons.insert_drive_file,
+                        ),
+
+                        title: Text(
+                          file.name,
+                        ),
+
+                        trailing: IconButton(
+
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.red,
+                          ),
+
+                          onPressed: () {
+
+                            setState(() {
+
+                              archivos.remove(file);
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+
+              // ======================================
+              // ERROR
+              // ======================================
+
               if (vm.error != null) ...[
+
                 const SizedBox(height: 10),
 
                 Text(
                   vm.error!,
+
                   style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.w600,
@@ -174,10 +301,15 @@ class _AgendaCreateScreenState
 
               const SizedBox(height: 30),
 
+              // ======================================
+              // GUARDAR
+              // ======================================
+
               SizedBox(
                 width: double.infinity,
 
                 child: ElevatedButton(
+
                   onPressed:
                       vm.creating
                           ? null
@@ -191,7 +323,8 @@ class _AgendaCreateScreenState
                               FocusScope.of(context)
                                   .unfocus();
 
-                              final ok =
+                              // 🔥 crear agenda
+                              final agenda =
                                   await vm.crearAgenda(
                                 periodoId:
                                     widget.periodoId,
@@ -219,7 +352,22 @@ class _AgendaCreateScreenState
 
                               if (!mounted) return;
 
-                              if (ok) {
+                              // 🔥 si se creó
+                              if (agenda != null) {
+
+                                // 🔥 subir archivos automáticamente
+                                if (archivos.isNotEmpty) {
+
+                                  await vm.subirArchivos(
+                                    agendaId:
+                                        agenda.id!,
+
+                                    archivos:
+                                        archivos,
+                                  );
+                                }
+
+                                if (!mounted) return;
 
                                 ScaffoldMessenger.of(
                                   context,
@@ -231,7 +379,6 @@ class _AgendaCreateScreenState
                                   ),
                                 );
 
-                                // 🔥 recarga lista
                                 context.go(
                                   '/mis-clases/${widget.periodoId}/${widget.cursoId}/${widget.paraleloId}/${widget.asignacionId}/agendas',
                                 );
@@ -240,15 +387,18 @@ class _AgendaCreateScreenState
 
                   child:
                       vm.creating
+
                           ? const SizedBox(
                               height: 18,
                               width: 18,
+
                               child:
                                   CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: Colors.white,
                               ),
                             )
+
                           : const Text(
                               'Guardar',
                             ),

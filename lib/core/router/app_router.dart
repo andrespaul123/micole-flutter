@@ -39,6 +39,7 @@ import '../../screen/profesor/asistencia_create_screen.dart';
 import '../../screen/agenda/agenda_list_screen.dart';
 import '../../screen/agenda/agenda_create_screen.dart';
 import '../../screen/agenda/agenda_detail_screen.dart';
+import '../../screen/modulos/module_screen.dart';
 
 
 
@@ -239,6 +240,18 @@ GoRouter createRouter(AuthViewModel authViewModel) {
                 path: 'create',
                 builder: (_, __) => const TenantScreen(),
               ),
+              GoRoute(
+  path: ':tenantId/modules',
+
+  builder: (_, state) {
+
+    return ModuleScreen(
+      tenantId: int.parse(
+        state.pathParameters['tenantId']!,
+      ),
+    );
+  },
+),
             ],
           ),
           GoRoute(
@@ -467,6 +480,7 @@ GoRoute(
 ),
   ],
 ),
+
         ],
       ),
     ],

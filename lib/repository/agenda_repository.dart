@@ -35,7 +35,7 @@ class AgendaRepository {
     );
   }
 
-  Future<void> crearAgenda({
+  Future<Agenda> crearAgenda({
     required int periodoId,
     required int asignacionId,
     required String titulo,
@@ -43,7 +43,7 @@ class AgendaRepository {
     required String tipo,
     String? fechaEntrega,
   }) async {
-    await _dio.post(
+   final response = await _dio.post(
       '/periodos/$periodoId/asignaciones/$asignacionId/agenda',
       data: {
         'titulo': titulo,
@@ -51,6 +51,9 @@ class AgendaRepository {
         'tipo': tipo,
         'fecha_entrega': fechaEntrega,
       },
+    );
+    return Agenda.fromJson(
+      response.data['data'],
     );
   }
 

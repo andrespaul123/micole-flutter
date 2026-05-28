@@ -117,98 +117,176 @@ class _TenantListScreenState
                               ),
                             ),
 
-                            trailing: IconButton(
+                            // ===================================
+                            // MENU
+                            // ===================================
 
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                              ),
+                            trailing:
+                                PopupMenuButton<String>(
 
-                              tooltip:
-                                  'Eliminar colegio',
+                              onSelected:
+                                  (value) async {
 
-                              onPressed: () async {
+                                // =====================
+                                // MODULOS
+                                // =====================
 
-                                final confirm =
-                                    await showDialog<bool>(
-                                  context: context,
+                                if (value ==
+                                    'modules') {
 
-                                  builder: (_) =>
-                                      AlertDialog(
+                                  context.go(
+                                    '/colegios/${t.id}/modules',
+                                  );
+                                }
 
-                                    title: const Text(
-                                      '¿Eliminar colegio?',
-                                    ),
+                                // =====================
+                                // ELIMINAR
+                                // =====================
 
-                                    content: Text(
-                                      'Se eliminará "${t.name}" permanentemente.',
-                                    ),
+                                if (value ==
+                                    'delete') {
 
-                                    actions: [
+                                  final confirm =
+                                      await showDialog<bool>(
 
-                                      TextButton(
-                                        onPressed: () =>
-                                            context.pop(
-                                                false),
+                                    context: context,
 
-                                        child: const Text(
-                                          'Cancelar',
-                                        ),
+                                    builder: (_) =>
+                                        AlertDialog(
+
+                                      title:
+                                          const Text(
+                                        '¿Eliminar colegio?',
                                       ),
 
-                                      ElevatedButton(
+                                      content: Text(
+                                        'Se eliminará "${t.name}" permanentemente.',
+                                      ),
 
-                                        style:
-                                            ElevatedButton
-                                                .styleFrom(
-                                          backgroundColor:
-                                              Colors.red,
-                                        ),
+                                      actions: [
 
-                                        onPressed: () =>
-                                            context.pop(
-                                                true),
+                                        TextButton(
 
-                                        child: const Text(
-                                          'Eliminar',
+                                          onPressed:
+                                              () =>
+                                                  context.pop(
+                                                      false),
 
-                                          style: TextStyle(
-                                            color:
-                                                Colors.white,
+                                          child:
+                                              const Text(
+                                            'Cancelar',
                                           ),
                                         ),
+
+                                        ElevatedButton(
+
+                                          style:
+                                              ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.red,
+                                          ),
+
+                                          onPressed:
+                                              () =>
+                                                  context.pop(
+                                                      true),
+
+                                          child:
+                                              const Text(
+                                            'Eliminar',
+
+                                            style:
+                                                TextStyle(
+                                              color:
+                                                  Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (confirm ==
+                                          true &&
+                                      mounted) {
+
+                                    final success =
+                                        await vm
+                                            .deleteTenant(
+                                      t.id!,
+                                    );
+
+                                    if (!mounted)
+                                      return;
+
+                                    ScaffoldMessenger.of(
+                                            context)
+                                        .showSnackBar(
+
+                                      SnackBar(
+                                        content:
+                                            Text(
+
+                                          success
+                                              ? 'Colegio eliminado'
+                                              : vm.error ??
+                                                  'Error al eliminar',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+
+                              itemBuilder: (_) => [
+
+                                const PopupMenuItem(
+                                  value:
+                                      'modules',
+
+                                  child: Row(
+                                    children: [
+
+                                      Icon(
+                                        Icons
+                                            .extension,
+                                      ),
+
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+
+                                      Text(
+                                        'Módulos',
                                       ),
                                     ],
                                   ),
-                                );
+                                ),
 
-                                if (confirm == true &&
-                                    mounted) {
+                                const PopupMenuItem(
+                                  value:
+                                      'delete',
 
-                                  final success =
-                                      await vm
-                                          .deleteTenant(
-                                    t.id!,
-                                  );
+                                  child: Row(
+                                    children: [
 
-                                  if (!mounted) return;
-
-                                  ScaffoldMessenger.of(
-                                          context)
-                                      .showSnackBar(
-
-                                    SnackBar(
-                                      content: Text(
-
-                                        success
-                                            ? 'Colegio eliminado'
-                                            : vm.error ??
-                                                'Error al eliminar',
+                                      Icon(
+                                        Icons.delete,
+                                        color:
+                                            Colors.red,
                                       ),
-                                    ),
-                                  );
-                                }
-                              },
+
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+
+                                      Text(
+                                        'Eliminar',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         );

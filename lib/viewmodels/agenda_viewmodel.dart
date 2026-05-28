@@ -57,7 +57,7 @@ class AgendaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> crearAgenda({
+  Future<Agenda?> crearAgenda({
     required int periodoId,
     required int asignacionId,
     required String titulo,
@@ -74,7 +74,7 @@ class AgendaViewModel extends ChangeNotifier {
 
     try {
 
-      await repository.crearAgenda(
+     final agenda = await repository.crearAgenda(
         periodoId: periodoId,
         asignacionId: asignacionId,
         titulo: titulo,
@@ -83,7 +83,7 @@ class AgendaViewModel extends ChangeNotifier {
         fechaEntrega: fechaEntrega,
       );
 
-      return true;
+      return agenda;
 
     } on DioException catch (e) {
 
@@ -91,13 +91,13 @@ class AgendaViewModel extends ChangeNotifier {
           e.response?.data['message'] ??
           'Error al crear agenda';
 
-      return false;
+      return null;
 
     } catch (_) {
 
       error = 'Error inesperado';
 
-      return false;
+      return null;
 
     } finally {
 

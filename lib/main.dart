@@ -38,6 +38,8 @@ import 'viewmodels/estudiantes_clase_viewmodel.dart';
 import 'viewmodels/anecdotario_viewmodel.dart';
 import 'viewmodels/asistencia_viewmodel.dart';
 import 'viewmodels/agenda_viewmodel.dart';  
+import 'viewmodels/module_viewmodel.dart';
+import 'repository/module_repository.dart';
 
 
 void main() async {
@@ -150,6 +152,11 @@ ChangeNotifierProvider(
     repository: AgendaRepository(
       dio,
     ),
+  ),
+),
+ChangeNotifierProvider(
+  create: (_) => ModuleViewModel(
+    repository: ModuleRepository(dio),
   ),
 ),
       ],
