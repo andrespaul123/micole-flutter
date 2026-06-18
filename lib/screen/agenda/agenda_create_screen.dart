@@ -37,7 +37,7 @@ class _AgendaCreateScreenState
 
   String tipo = 'tarea';
 
-  // 🔥 archivos seleccionados
+
   List<PlatformFile> archivos = [];
 
   @override

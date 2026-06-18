@@ -76,4 +76,37 @@ class ProfesorRepository {
 
     await _dio.delete('/profesores/$id');
   }
+
+  Future<Profesor> getProfesorById(int id) async {
+  final response = await _dio.get('/profesores/$id');
+
+  return Profesor.fromJson(
+    response.data,
+  );
+}
+
+Future<Profesor> updateProfesor({
+  required int id,
+  required String name,
+  required String email,
+  String? password,
+  required String codigo,
+  String? especialidad,
+}) async {
+
+  final response = await _dio.put(
+    '/profesores/$id',
+    data: {
+      'name': name,
+      'email': email,
+      'password': password,
+      'codigo_profesor': codigo,
+      'especialidad': especialidad,
+    },
+  );
+
+  return Profesor.fromJson(
+    response.data,
+  );
+}
 }

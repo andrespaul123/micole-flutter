@@ -72,7 +72,7 @@ class ClaseDashboardScreen extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 24),
 
                     SizedBox(
                       width: double.infinity,
@@ -92,6 +92,27 @@ class ClaseDashboardScreen extends StatelessWidget {
                       ),
                           ),
                           const SizedBox(height: 14),
+                          SizedBox(
+  width: double.infinity,
+  child: ElevatedButton.icon(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.teal,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(
+        vertical: 14,
+      ),
+    ),
+    onPressed: () {
+      context.go(
+        '/mis-clases/$periodoId/$cursoId/$paraleloId/$asignacionId/libro-calificaciones',
+      );
+    },
+    icon: const Icon(Icons.grade),
+    label: const Text(
+      'Libro de Calificaciones',
+    ),
+  ),
+),
 
 SizedBox(
   width: double.infinity,
@@ -127,6 +148,25 @@ SizedBox(
     },
     icon: const Icon(Icons.event_note),
     label: const Text('Ver Agenda'),
+  ),
+),
+const SizedBox(height: 14),
+
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton.icon(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.blue,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 14),
+    ),
+    onPressed: () {
+      context.go(
+        '/mis-clases/$periodoId/$cursoId/$paraleloId/$asignacionId/criterios',
+      );
+    },
+    icon: const Icon(Icons.rule),
+    label: const Text('Criterios de Evaluación'),
   ),
 ),
                   ],

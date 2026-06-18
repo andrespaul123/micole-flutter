@@ -10,8 +10,7 @@ class AnecdotarioRepository {
     required int asignacionDocenteId,
     required int academicPeriodId,
   }) async {
-    final response = await _dio.get(
-      '/anecdotarios',
+    final response = await _dio.get('/anecdotarios',
       queryParameters: {
         'asignacion_docente_id': asignacionDocenteId,
         'academic_period_id': academicPeriodId,

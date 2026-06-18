@@ -25,9 +25,7 @@ class _ProfesorListScreenState extends State<ProfesorListScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () async { context.go('/profesores/create');},
-          /* await context.push('/profesores/nuevo'); 
-          if (mounted) vm.loadProfesores();
-        }, */
+         
         child: const Icon(Icons.add),
       ),
       body: vm.loading
@@ -67,6 +65,19 @@ class _ProfesorListScreenState extends State<ProfesorListScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                             IconButton(
+      icon: const Icon(
+        Icons.edit,
+        color: Colors.orange,
+      ),
+      tooltip: 'Editar profesor',
+      onPressed: () {
+        context.go(
+          '/profesores/${p.id}/edit',
+        );
+      },
+    ),
+
                              IconButton(
                              icon: const Icon(Icons.calendar_view_week_rounded,
                            color: Colors.deepPurple),

@@ -62,6 +62,7 @@ class _AsistenciaCreateScreenState
           : Column(
               children: [
                 Expanded(
+                  //generar lista de estudiantes con dropdown de estado de asistencia
                   child: ListView.builder(
                     itemCount:
                         estudiantesVM.estudiantes.length,

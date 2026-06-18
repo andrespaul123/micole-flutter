@@ -77,47 +77,96 @@ class _PadreListScreenState extends State<PadreListScreen> {
                           ],
                         ),
 
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () async {
+                       trailing: Row(
+  mainAxisSize: MainAxisSize.min,
+  children: [
 
-                            final confirm = await showDialog<bool>(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                title: const Text('¿Eliminar padre?'),
-                                content: Text(
-                                    'Se eliminará a "${p.name}" permanentemente.'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => context.pop(false),
-                                    child: const Text('Cancelar'),
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red),
-                                    onPressed: () => context.pop(true),
-                                    child: const Text('Eliminar',
-                                        style: TextStyle(color: Colors.white)),
-                                  ),
-                                ],
-                              ),
-                            );
+    // BOTÓN EDITAR
+    IconButton(
+      icon: const Icon(
+        Icons.edit,
+        color: Colors.blue,
+      ),
+      onPressed: () {
+        context.go(
+          '/padres/${p.id}/edit',
+        );
+      },
+    ),
 
-                            if (confirm == true && mounted) {
-                              final success = await vm.deletePadre(p.id!);
+    // BOTÓN ELIMINAR
+    IconButton(
+      icon: const Icon(
+        Icons.delete,
+        color: Colors.red,
+      ),
+      onPressed: () async {
 
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(success
-                                        ? 'Padre eliminado'
-                                        : 'Error al eliminar'),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                        ),
+        final confirm =
+            await showDialog<bool>(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text(
+              '¿Eliminar padre?',
+            ),
+            content: Text(
+              'Se eliminará a "${p.name}" permanentemente.',
+            ),
+            actions: [
+
+              TextButton(
+                onPressed: () =>
+                    context.pop(false),
+                child: const Text(
+                  'Cancelar',
+                ),
+              ),
+
+              ElevatedButton(
+                style:
+                    ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.red,
+                ),
+                onPressed: () =>
+                    context.pop(true),
+                child: const Text(
+                  'Eliminar',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm == true && mounted) {
+
+          final success =
+              await vm.deletePadre(
+            p.id!,
+          );
+
+          if (mounted) {
+
+            ScaffoldMessenger.of(
+                    context)
+                .showSnackBar(
+              SnackBar(
+                content: Text(
+                  success
+                      ? 'Padre eliminado'
+                      : 'Error al eliminar',
+                ),
+              ),
+            );
+          }
+        }
+      },
+    ),
+  ],
+),
                       ),
                     );
                   },

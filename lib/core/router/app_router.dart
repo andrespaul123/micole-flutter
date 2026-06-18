@@ -4,7 +4,7 @@ import '../../models/profesor.dart';
 import '../../models/curso.dart';
 // Auth
 import '../../screen/login/login_screen.dart';
-import '../../screen/login/register_screen.dart'; 
+import '../../screen/login/register_screen.dart';
 // Director
 import '../../screen/subject/subject_list_screen.dart';
 import '../../screen/subject/subject_screen.dart';
@@ -40,8 +40,13 @@ import '../../screen/agenda/agenda_list_screen.dart';
 import '../../screen/agenda/agenda_create_screen.dart';
 import '../../screen/agenda/agenda_detail_screen.dart';
 import '../../screen/modulos/module_screen.dart';
-
-
+import '../../screen/estudiante/estudiante_edit_screen.dart';
+import '../../screen/criterio/CriterioScreen.dart';
+import '../../screen/periodoEvaluacion/PeriodoEvaluacionCreateScreen.dart';
+import '../../screen/periodoEvaluacion/PeriodoEvaluacionListScreen.dart';
+import '../../screen/libro_calificaciones/libro_calificaciones_screen.dart';
+import '../../screen/padre_familia/padre_edit_screen.dart';
+import '../../screen/director/profesor_edit_screen.dart';
 
 // Super Admin
 import '../../screen/tenant/tenant_list_screen.dart';
@@ -50,7 +55,6 @@ import '../../screen/tenant_screen.dart';
 // Layout
 import '../layout/main_layout.dart';
 import '../layout/home_dashboard.dart';
-
 
 late GoRouter _routerInstance;
 
@@ -66,40 +70,32 @@ GoRouter createRouter(AuthViewModel authViewModel) {
     refreshListenable: authViewModel,
 
     redirect: (context, state) {
-      final loggedIn  = authViewModel.isLoggedIn;
-      final isAuthPage = state.matchedLocation == '/login' ||
-                         state.matchedLocation == '/register';
+      final loggedIn = authViewModel.isLoggedIn;
+      final isAuthPage =
+          state.matchedLocation == '/login' ||
+          state.matchedLocation == '/register';
 
       if (!loggedIn && !isAuthPage) return '/login';
-      if (loggedIn  &&  isAuthPage) return '/home';
+      if (loggedIn && isAuthPage) return '/home';
       return null;
     },
 
     routes: [
       // ── Autenticación ────────────────────────────────────────────────
-      GoRoute(
-        path: '/login',
-        builder: (_, __) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: '/register',
-        builder: (_, __) => const RegisterScreen(),
-      ),
+      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
+      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
 
       // ── Shell principal (AppBar + BottomNav) ─────────────────────────
       ShellRoute(
-        builder: (context, state, child) => MainLayout(
-          child: child,
-          //location: state.matchedLocation,
-          location: state.matchedLocation,
-        ),
+        builder:
+            (context, state, child) => MainLayout(
+              child: child,
+              //location: state.matchedLocation,
+              location: state.matchedLocation,
+            ),
         routes: [
-
           // ── Home ──────────────────────────────────────────────────────
-          GoRoute(
-            path: '/home',
-            builder: (_, __) => const HomeDashboard(),
-          ),
+          GoRoute(path: '/home', builder: (_, __) => const HomeDashboard()),
 
           // ── DIRECTOR: Materias ────────────────────────────────────────
           GoRoute(
@@ -122,83 +118,166 @@ GoRouter createRouter(AuthViewModel authViewModel) {
                 path: 'create',
                 builder: (_, __) => const ProfesorCreateScreen(),
               ),
+               GoRoute(
+      path: ':id/edit',
+      builder: (_, state) {
+
+        final id = int.parse(
+          state.pathParameters['id']!,
+        );
+
+        return ProfesorEditScreen(
+          id: id,
+        );
+      },
+    ),
               GoRoute(
                 // extra: Profesor
                 path: ':id/materia',
                 builder: (_, state) {
-                    final id = int.parse(state.pathParameters['id']!);
-                    return AsignarMateriaScreen(profesorId: id);},
+                  final id = int.parse(state.pathParameters['id']!);
+                  return AsignarMateriaScreen(profesorId: id);
+                },
               ),
               GoRoute(
                 // extra: Profesor
                 path: ':id/horario',
                 builder: (_, state) {
-                    final id = int.parse(state.pathParameters['id']!);
-                    return AsignarHorarioScreen(profesorId: id);},
+                  final id = int.parse(state.pathParameters['id']!);
+                  return AsignarHorarioScreen(profesorId: id);
+                },
               ),
               GoRoute(
                 path: ':id/ver-horario',
-                builder:(_,state){
-                final id = int.parse(state.pathParameters['id']!);
-                return HorarioProfesorScreen(profesorId: id);},
+                builder: (_, state) {
+                  final id = int.parse(state.pathParameters['id']!);
+                  return HorarioProfesorScreen(profesorId: id);
+                },
               ),
-
-            ],
-          ),
-             GoRoute(
-               path: '/estudiantes',
-               builder: (_, __) => const EstudianteListScreen(),
-              routes: [
-              GoRoute(
-              path: 'create',
-              builder: (_, __) => const EstudianteCreateScreen(),
-      ),
             ],
           ),
           GoRoute(
-          path: '/padres',
-          builder: (_, __) => const PadreListScreen(),
+            path: '/estudiantes',
+            builder: (_, __) => const EstudianteListScreen(),
             routes: [
-       GoRoute(
-      path: 'create',
-      builder: (_, __) => const PadreCreateScreen(),
-    ),
-  ],
+              GoRoute(
+                path: 'create',
+                builder: (_, __) => const EstudianteCreateScreen(),
+              ),
+              GoRoute(
+  path: ':id/edit',
+  builder: (_, state) {
+    final id = int.parse(
+      state.pathParameters['id']!,
+    );
+
+    return EstudianteEditScreen(
+      id: id,
+    );
+  },
 ),
-          
+            ],
+          ),
+          GoRoute(
+            path: '/padres',
+            builder: (_, __) => const PadreListScreen(),
+            routes: [
+              GoRoute(
+                path: 'create',
+                builder: (_, __) => const PadreCreateScreen(),
+              ),
+               GoRoute(
+      path: ':id/edit',
+      builder: (_, state) {
+
+        final id = int.parse(
+          state.pathParameters['id']!,
+        );
+
+        return PadreEditScreen(
+          id: id,
+        );
+      },
+    ),
+            ],
+          ),
 
           // ── DIRECTOR: Cursos ──────────────────────────────────────────
-         GoRoute(
-  path: '/cursos',
-  builder: (_, __) => const CursoListScreen(),
+          GoRoute(
+            path: '/cursos',
+            builder: (_, __) => const CursoListScreen(),
+            routes: [
+              GoRoute(
+                path: 'create',
+                builder: (_, __) => const CursoCreateScreen(),
+              ),
+
+              GoRoute(
+                path: ':cursoId/paralelos',
+                builder: (_, state) {
+                  final cursoId = int.parse(state.pathParameters['cursoId']!);
+                  return ParaleloListScreen(cursoId: cursoId);
+                },
+                routes: [
+                  GoRoute(
+                    path: 'create',
+                    builder: (_, state) {
+                      final cursoId = int.parse(
+                        state.pathParameters['cursoId']!,
+                      );
+                      return ParaleloCreateScreen(cursoId: cursoId);
+                    },
+                  ),
+                  GoRoute(
+                    path: ':paraleloId/horario',
+                    builder: (_, state) {
+                      final cursoId = int.parse(
+                        state.pathParameters['cursoId']!,
+                      );
+                      final paraleloId = int.parse(
+                        state.pathParameters['paraleloId']!,
+                      );
+                      return HorarioCursoScreen(
+                        cursoId: cursoId,
+                        paraleloId: paraleloId,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+         // ── DIRECTOR: Periodos académicos ─────────────────────────────
+GoRoute(
+  path: '/periodos',
+  builder: (_, __) => const PeriodoListScreen(),
   routes: [
     GoRoute(
       path: 'create',
-      builder: (_, __) => const CursoCreateScreen(),
+      builder: (_, __) => const PeriodoCreateScreen(),
     ),
-
     GoRoute(
-      path: ':cursoId/paralelos',
+      path: ':periodoId/periodos-evaluacion',
       builder: (_, state) {
-        final cursoId = int.parse(state.pathParameters['cursoId']!);
-        return ParaleloListScreen(cursoId: cursoId);
+        final periodoId = int.parse(
+          state.pathParameters['periodoId']!,
+        );
+
+        return PeriodoEvaluacionListScreen(
+          periodoId: periodoId,
+        );
       },
       routes: [
         GoRoute(
           path: 'create',
           builder: (_, state) {
-            final cursoId = int.parse(state.pathParameters['cursoId']!);
-            return ParaleloCreateScreen(cursoId: cursoId);
-          },
-        ),
-        GoRoute(
-          path: ':paraleloId/horario',
-          builder: (_, state) {
-            final cursoId    = int.parse(state.pathParameters['cursoId']!);
-            final paraleloId = int.parse(state.pathParameters['paraleloId']!);
-            return HorarioCursoScreen(
-              cursoId:    cursoId,
-              paraleloId: paraleloId,
+            final periodoId = int.parse(
+              state.pathParameters['periodoId']!,
+            );
+
+            return PeriodoEvaluacionCreateScreen(
+              periodoId: periodoId,
             );
           },
         ),
@@ -206,18 +285,6 @@ GoRouter createRouter(AuthViewModel authViewModel) {
     ),
   ],
 ),
-
-          // ── DIRECTOR: Periodos académicos ─────────────────────────────
-          GoRoute(
-            path: '/periodos',
-            builder: (_, __) => const PeriodoListScreen(),
-            routes: [
-              GoRoute(
-                path: 'create',
-                builder: (_, __) => const PeriodoCreateScreen(),
-              ),
-            ],
-          ),
 
           // ── DIRECTOR: Mi colegio ──────────────────────────────────────
           GoRoute(
@@ -236,251 +303,170 @@ GoRouter createRouter(AuthViewModel authViewModel) {
             path: '/colegios',
             builder: (_, __) => const TenantListScreen(),
             routes: [
+              GoRoute(path: 'create', builder: (_, __) => const TenantScreen()),
               GoRoute(
-                path: 'create',
-                builder: (_, __) => const TenantScreen(),
+                path: ':tenantId/modules',
+
+                builder: (_, state) {
+                  return ModuleScreen(
+                    tenantId: int.parse(state.pathParameters['tenantId']!),
+                  );
+                },
               ),
-              GoRoute(
-  path: ':tenantId/modules',
-
-  builder: (_, state) {
-
-    return ModuleScreen(
-      tenantId: int.parse(
-        state.pathParameters['tenantId']!,
-      ),
-    );
-  },
-),
             ],
           ),
           GoRoute(
-       path: '/circulares',
-  builder: (_, __) => const CircularListScreen(),
-  routes: [
-    GoRoute(
-      path: 'create',
-      builder: (_, __) => const CircularCreateScreen(),
-    ),
-    GoRoute(
-      path: ':id',
-      builder: (_, state) {
-        final id = int.parse(state.pathParameters['id']!);
-        return CircularDetailScreen(id: id);
-      },
-    ),
-  ],
-),
-GoRoute(
-  path: '/inscripciones',
-  builder: (_, __) => const InscripcionListScreen(),
-  routes: [
-    GoRoute(
-      path: 'create',
-      builder: (_, __) => const InscripcionCreateScreen(),
-    ),
-  ],
-),
-GoRoute(
-  path: '/mis-clases',
-  builder: (_, __) => const MisClasesScreen(),
-),
+            path: '/circulares',
+            builder: (_, __) => const CircularListScreen(),
+            routes: [
+              GoRoute(
+                path: 'create',
+                builder: (_, __) => const CircularCreateScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (_, state) {
+                  final id = int.parse(state.pathParameters['id']!);
+                  return CircularDetailScreen(id: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/inscripciones',
+            builder: (_, __) => const InscripcionListScreen(),
+            routes: [
+              GoRoute(
+                path: 'create',
+                builder: (_, __) => const InscripcionCreateScreen(),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/mis-clases',
+            builder: (_, __) => const MisClasesScreen(),
+          ),
 
-/* GoRoute(
-  path: '/mis-clases/:periodoId/:cursoId/:paraleloId/estudiantes',
+          GoRoute(
+            path: '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId',
+            builder: (_, state) {
+              final periodoId = int.parse(state.pathParameters['periodoId']!);
+
+              final cursoId = int.parse(state.pathParameters['cursoId']!);
+
+              final paraleloId = int.parse(state.pathParameters['paraleloId']!);
+
+              final asignacionId = int.parse(
+                state.pathParameters['asignacionId']!,
+              );
+
+              return ClaseDashboardScreen(
+                periodoId: periodoId,
+                cursoId: cursoId,
+                paraleloId: paraleloId,
+                asignacionId: asignacionId,
+                curso: state.uri.queryParameters['curso'] ?? '',
+                paralelo: state.uri.queryParameters['paralelo'] ?? '',
+                materia: state.uri.queryParameters['materia'] ?? '',
+              );
+            },
+          ),
+          GoRoute(
+            path:
+                '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/anecdotarios',
+            builder: (_, state) {
+              return AnecdotarioListScreen(
+                periodoId: int.parse(state.pathParameters['periodoId']!),
+                asignacionId: int.parse(state.pathParameters['asignacionId']!),
+              );
+            },
+          ),
+          GoRoute(
+            path:
+                '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/anecdotarios/create',
+            builder: (_, state) {
+              return AnecdotarioCreateScreen(
+                periodoId: int.parse(state.pathParameters['periodoId']!),
+                cursoId: int.parse(state.pathParameters['cursoId']!),
+                paraleloId: int.parse(state.pathParameters['paraleloId']!),
+                asignacionId: int.parse(state.pathParameters['asignacionId']!),
+              );
+            },
+          ),
+          GoRoute(
+            path:
+                '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/asistencia',
+            builder: (_, state) {
+              return AsistenciaCreateScreen(
+                periodoId: int.parse(state.pathParameters['periodoId']!),
+                cursoId: int.parse(state.pathParameters['cursoId']!),
+                paraleloId: int.parse(state.pathParameters['paraleloId']!),
+                asignacionId: int.parse(state.pathParameters['asignacionId']!),
+              );
+            },
+          ),
+          // Agendas
+          GoRoute(
+            path:
+                '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/agendas',
+            builder: (_, state) {
+              return AgendaListScreen(
+                periodoId: int.parse(state.pathParameters['periodoId']!),
+                cursoId: int.parse(state.pathParameters['cursoId']!),
+                paraleloId: int.parse(state.pathParameters['paraleloId']!),
+                asignacionId: int.parse(state.pathParameters['asignacionId']!),
+              );
+            },
+            routes: [
+              // CREAR AGENDA
+              GoRoute(
+                path: 'create',
+
+                builder: (_, state) {
+                  return AgendaCreateScreen(
+                    periodoId: int.parse(state.pathParameters['periodoId']!),
+
+                    asignacionId: int.parse(
+                      state.pathParameters['asignacionId']!,
+                    ),
+                    cursoId: int.parse(state.pathParameters['cursoId']!),
+                    paraleloId: int.parse(state.pathParameters['paraleloId']!),
+                  );
+                },
+              ),
+              GoRoute(
+                path: ':agendaId',
+
+                builder: (_, state) {
+                  return AgendaDetailScreen(
+                    agendaId: int.parse(state.pathParameters['agendaId']!),
+                  );
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path:
+                '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/criterios',
+            builder: (_, state) {
+              return CriterioScreen(
+                periodoId: int.parse(
+    state.pathParameters['periodoId']!,
+  ),
+                asignacionId: int.parse(state.pathParameters['asignacionId']!),
+              );
+            },
+          ),
+          GoRoute(
+  path: '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/libro-calificaciones',
   builder: (_, state) {
-    final periodoId =
-        int.parse(state.pathParameters['periodoId']!);
-
-    final cursoId =
-        int.parse(state.pathParameters['cursoId']!);
-
-    final paraleloId =
-        int.parse(state.pathParameters['paraleloId']!);
-
-    final curso =
-        state.uri.queryParameters['curso'] ?? '';
-
-    final paralelo =
-        state.uri.queryParameters['paralelo'] ?? '';
-
-    return EstudiantesClaseScreen(
-      periodoId: periodoId,
-      cursoId: cursoId,
-      paraleloId: paraleloId,
-      cursoNombre: curso,
-      paraleloNombre: paralelo,
-    );
-  },
-), */
-GoRoute(
-  path: '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId',
-  builder: (_, state) {
-    final periodoId =
-        int.parse(state.pathParameters['periodoId']!);
-
-    final cursoId =
-        int.parse(state.pathParameters['cursoId']!);
-
-    final paraleloId =
-        int.parse(state.pathParameters['paraleloId']!);
-
-    final asignacionId =
-        int.parse(state.pathParameters['asignacionId']!);
-
-    return ClaseDashboardScreen(
-      periodoId: periodoId,
-      cursoId: cursoId,
-      paraleloId: paraleloId,
-      asignacionId: asignacionId,
-      curso: state.uri.queryParameters['curso'] ?? '',
-      paralelo: state.uri.queryParameters['paralelo'] ?? '',
-      materia: state.uri.queryParameters['materia'] ?? '',
-    );
-     },
-),
-GoRoute(
-  path:
-      '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/anecdotarios',
-  builder: (_, state) {
-    return AnecdotarioListScreen(
-      periodoId: int.parse(
-        state.pathParameters['periodoId']!,
-      ),
+    return LibroCalificacionesScreen(
       asignacionId: int.parse(
         state.pathParameters['asignacionId']!,
       ),
     );
   },
 ),
-GoRoute(
-  path:
-      '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/anecdotarios/create',
-  builder: (_, state) {
-    return AnecdotarioCreateScreen(
-      periodoId:
-          int.parse(state.pathParameters['periodoId']!),
-      cursoId:
-          int.parse(state.pathParameters['cursoId']!),
-      paraleloId:
-          int.parse(state.pathParameters['paraleloId']!),
-      asignacionId:
-          int.parse(state.pathParameters['asignacionId']!),
-    );
-  },
-), 
-GoRoute(
-  path:
-      '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/asistencia',
-  builder: (_, state) {
-    return AsistenciaCreateScreen(
-      periodoId:
-          int.parse(state.pathParameters['periodoId']!),
-      cursoId:
-          int.parse(state.pathParameters['cursoId']!),
-      paraleloId:
-          int.parse(state.pathParameters['paraleloId']!),
-      asignacionId:
-          int.parse(state.pathParameters['asignacionId']!),
-    );
-  },
-),
-// Agendas
-GoRoute(
-  path:
-      '/mis-clases/:periodoId/:cursoId/:paraleloId/:asignacionId/agendas',
-  builder: (_, state) {
-    return AgendaListScreen(
-      periodoId:
-          int.parse(state.pathParameters['periodoId']!),
-      cursoId:
-          int.parse(state.pathParameters['cursoId']!),
-      paraleloId:
-          int.parse(state.pathParameters['paraleloId']!),
-      asignacionId:
-          int.parse(state.pathParameters['asignacionId']!),
-    );
-  },
-   routes: [
-
-    // CREAR AGENDA
-    GoRoute(
-      path: 'create',
-
-      builder: (_, state) {
-        return AgendaCreateScreen(
-          periodoId:
-              int.parse(
-                state.pathParameters['periodoId']!,
-              ),
-
-          asignacionId:
-              int.parse(
-                state.pathParameters['asignacionId']!,
-              ),
-          cursoId:
-              int.parse(
-                state.pathParameters['cursoId']!,
-              ),
-          paraleloId:
-              int.parse(
-                state.pathParameters['paraleloId']!,
-              ),
-        );
-      },
-    ),
-
-    // DETALLE AGENDA
-    /* GoRoute(
-      path: ':agendaId',
-
-      builder: (_, state) {
-        return AgendaDetailScreen(
-
-          periodoId:
-              int.parse(
-                state.pathParameters['periodoId']!,
-              ),
-
-          cursoId:
-              int.parse(
-                state.pathParameters['cursoId']!,
-              ),
-
-          paraleloId:
-              int.parse(
-                state.pathParameters['paraleloId']!,
-              ),
-
-          asignacionId:
-              int.parse(
-                state.pathParameters['asignacionId']!,
-              ),
-
-          agendaId:
-              int.parse(
-                state.pathParameters['agendaId']!,
-              ),
-        );
-      },
-    ), */
-    GoRoute(
-  path: ':agendaId',
-
-  builder: (_, state) {
-
-    return AgendaDetailScreen(
-
-      agendaId:
-          int.parse(
-            state.pathParameters['agendaId']!,
-          ),
-    );
-  },
-),
-  ],
-),
-
         ],
       ),
     ],

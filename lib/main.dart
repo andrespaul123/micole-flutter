@@ -40,6 +40,12 @@ import 'viewmodels/asistencia_viewmodel.dart';
 import 'viewmodels/agenda_viewmodel.dart';  
 import 'viewmodels/module_viewmodel.dart';
 import 'repository/module_repository.dart';
+import 'viewmodels/criterio_viewmodel.dart';
+import 'repository/criterio_repository.dart'; 
+import 'viewmodels/periodo_evaluacion_viewmodel.dart';
+import 'repository/periodo_evaluacion_repository.dart';
+import 'viewmodels/libro_calificaciones_viewmodel.dart';
+import 'repository/libro_calificaciones_repository.dart';
 
 
 void main() async {
@@ -112,6 +118,18 @@ void main() async {
             repository: AcademicPeriodRepository(dio),
           )..loadPeriodoActivo(),
         ),
+        ChangeNotifierProvider(
+  create: (_) => PeriodoEvaluacionViewModel(
+    repository: PeriodoEvaluacionRepository(dio),
+  ),
+),
+
+ChangeNotifierProvider(
+  create: (_) => AsignacionViewModel(
+    repository: AsignacionRepository(dio),
+    periodoRepository: AcademicPeriodRepository(dio),
+  ),
+),
 
         // Asignación
         ChangeNotifierProvider(
@@ -157,6 +175,16 @@ ChangeNotifierProvider(
 ChangeNotifierProvider(
   create: (_) => ModuleViewModel(
     repository: ModuleRepository(dio),
+  ),
+),
+ChangeNotifierProvider(
+  create: (_) => CriterioViewModel(
+    repository: CriterioRepository(dio),
+  ),
+),
+ChangeNotifierProvider(
+  create: (_) => LibroCalificacionesViewModel(
+    repository: LibroCalificacionesRepository(dio),
   ),
 ),
       ],

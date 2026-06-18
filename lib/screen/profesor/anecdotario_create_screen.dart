@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/estudiante_clase.dart';
 import '../../viewmodels/anecdotario_viewmodel.dart';
+import 'package:go_router/go_router.dart';
 import '../../viewmodels/estudiantes_clase_viewmodel.dart';
 
 class AnecdotarioCreateScreen extends StatefulWidget {
@@ -156,7 +157,9 @@ class _AnecdotarioCreateScreenState
                             ),
                           );
 
-                          Navigator.pop(context);
+                          context.go(
+ '/mis-clases/${widget.periodoId}/${widget.cursoId}/${widget.paraleloId}/${widget.asignacionId}/anecdotarios'
+);
                         }
                       },
                 child: vm.creating

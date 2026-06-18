@@ -2,28 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/academic_period_viewmodel.dart';
- 
+
 class PeriodoListScreen extends StatefulWidget {
   const PeriodoListScreen({super.key});
- 
+
   @override
   State<PeriodoListScreen> createState() => _PeriodoListScreenState();
 }
- 
+
 class _PeriodoListScreenState extends State<PeriodoListScreen> {
   static const _purple = Color(0xFF4F46E5);
- 
+
   @override
   void initState() {
     super.initState();
     Future.microtask(() =>
         Provider.of<AcademicPeriodViewModel>(context, listen: false).loadPeriodos());
   }
- 
+
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<AcademicPeriodViewModel>(context);
- 
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: _purple,
@@ -63,7 +63,7 @@ class _PeriodoListScreenState extends State<PeriodoListScreen> {
                   itemBuilder: (_, i) {
                     final p = vm.periodos[i];
                     final isActivo = p.activo ?? false;
- 
+
                     return Card(
                       margin: const EdgeInsets.only(bottom: 10),
                       elevation: 2,
@@ -116,6 +116,19 @@ class _PeriodoListScreenState extends State<PeriodoListScreen> {
                             ),
                             Column(
                               children: [
+                                // Ver periodos de evaluación
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.assignment_outlined,
+                                    color: Color(0xFF4F46E5),
+                                  ),
+                                  tooltip: 'Periodos de evaluación',
+                                  onPressed: () {
+                                    context.go(
+                                      '/periodos/${p.id}/periodos-evaluacion',
+                                    );
+                                  },
+                                ),
                                 if (!isActivo)
                                   IconButton(
                                     icon: const Icon(Icons.check_circle_outline, color: Colors.green),

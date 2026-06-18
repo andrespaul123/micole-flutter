@@ -26,11 +26,6 @@ class _SubjectListScreenState extends State<SubjectListScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {context.go('/materias/create');},
-          /* await context.push('/materias/nueva'); 
-          if (mounted) vm.loadSubjects(); */
-         /*  await context.push('/materias/nueva'); 
-          if (mounted) vm.loadSubjects();
-        }, */
       ),
       body: vm.loading
           ? const Center(child: CircularProgressIndicator())

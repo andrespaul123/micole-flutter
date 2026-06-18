@@ -10,6 +10,7 @@ class PadreFamiliaViewModel extends ChangeNotifier {
 
   bool loading = false;
   bool creating = false;
+  bool updating = false;
   String? error;
   List<PadreFamilia> padres = [];
 
@@ -81,5 +82,75 @@ class PadreFamiliaViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<PadreFamilia?> getPadreById(
+  int id,
+) async {
+  try {
+    return await repository.getPadreById(id);
+  } on DioException catch (e) {
+    error = ApiErrorHandler.handle(e);
+    notifyListeners();
+    return null;
+  } catch (e) {
+    error = "Error inesperado";
+    notifyListeners();
+    return null;
+  }
+}
+
+Future<bool> updatePadre({
+  required int id,
+  required String name,
+  required String email,
+  String? password,
+  String? telefono,
+  String? ocupacion,
+}) async {
+
+  updating = true;
+  error = null;
+
+  notifyListeners();
+
+  try {
+
+    final padre = await repository.updatePadre(
+      id: id,
+      name: name,
+      email: email,
+      password: password,
+      telefono: telefono,
+      ocupacion: ocupacion,
+    );
+
+    final index = padres.indexWhere(
+      (p) => p.id == id,
+    );
+
+    if (index != -1) {
+      padres[index] = padre;
+    }
+
+    return true;
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+    return false;
+
+  } catch (e) {
+
+    error = "Error inesperado";
+
+    return false;
+
+  } finally {
+
+    updating = false;
+
+    notifyListeners();
+  }
+}
 }
     

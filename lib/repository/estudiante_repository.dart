@@ -33,4 +33,35 @@ class EstudianteRepository {
   Future<void> deleteEstudiante(int id) async {
       await _dio.delete('/estudiantes/$id');
   }
+
+  Future<Estudiante> getEstudiante(int id) async {
+  final response = await _dio.get('/estudiantes/$id');
+
+  return Estudiante.fromJson(response.data);
+}
+
+Future<Estudiante> updateEstudiante({
+  required int id,
+  required String name,
+  required String email,
+  required String codigo,
+  String? password,
+}) async {
+  final Map<String, dynamic> data = {
+    "name": name,
+    "email": email,
+    "codigo_estudiante": codigo,
+  };
+
+  if (password != null && password.isNotEmpty) {
+    data["password"] = password;
+  }
+
+  final response = await _dio.put(
+    "/estudiantes/$id",
+    data: data,
+  );
+
+  return Estudiante.fromJson(response.data["data"]);
+}
 }

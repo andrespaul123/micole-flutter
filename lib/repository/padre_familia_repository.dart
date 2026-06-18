@@ -35,4 +35,37 @@ class PadreFamiliaRepository {
     
       await _dio.delete('/padre-familias/$id');
   }
+  Future<PadreFamilia> getPadreById(int id) async {
+  final response = await _dio.get(
+    '/padre-familias/$id',
+  );
+
+  return PadreFamilia.fromJson(
+    response.data,
+  );
+}
+
+Future<PadreFamilia> updatePadre({
+  required int id,
+  required String name,
+  required String email,
+  String? password,
+  String? telefono,
+  String? ocupacion,
+}) async {
+  final response = await _dio.put(
+    '/padre-familias/$id',
+    data: {
+      "name": name,
+      "email": email,
+      "password": password,
+      "telefono": telefono,
+      "ocupacion": ocupacion,
+    },
+  );
+
+  return PadreFamilia.fromJson(
+    response.data["data"],
+  );
+}
 }

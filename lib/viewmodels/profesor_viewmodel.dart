@@ -12,6 +12,7 @@ class ProfesorViewModel extends ChangeNotifier {
   bool loading = false;
   bool creating = false;
   bool assigning = false;
+  bool updating = false;
 
   String? error;
 
@@ -230,4 +231,101 @@ class ProfesorViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<Profesor?> getProfesorById(
+  int id,
+) async {
+
+  try {
+
+    return await repository.getProfesorById(id);
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+    notifyListeners();
+
+    return null;
+
+  } catch (_) {
+
+    error = "Error inesperado";
+
+    notifyListeners();
+
+    return null;
+  }
+}
+Future<bool> updateProfesor({
+
+  required int id,
+
+  required String name,
+
+  required String email,
+
+  String? password,
+
+  required String codigo,
+
+  String? especialidad,
+
+}) async {
+
+  if (updating) return false;
+
+  updating = true;
+
+  error = null;
+
+  notifyListeners();
+
+  try {
+
+    final profesor =
+        await repository.updateProfesor(
+
+      id: id,
+
+      name: name,
+
+      email: email,
+
+      password: password,
+
+      codigo: codigo,
+
+      especialidad: especialidad,
+    );
+
+    final index = profesores.indexWhere(
+      (e) => e.id == id,
+    );
+
+    if (index != -1) {
+
+      profesores[index] = profesor;
+    }
+
+    return true;
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+    return false;
+
+  } catch (_) {
+
+    error = "Error inesperado";
+
+    return false;
+
+  } finally {
+
+    updating = false;
+
+    notifyListeners();
+  }
+}
 }

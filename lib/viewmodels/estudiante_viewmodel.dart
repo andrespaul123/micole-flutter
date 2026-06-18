@@ -10,6 +10,7 @@ class EstudianteViewModel extends ChangeNotifier {
 
   bool loading = false;
   bool creating = false;
+  bool updating = false;
   String? error;
   List<Estudiante> estudiantes = [];
 
@@ -94,4 +95,57 @@ class EstudianteViewModel extends ChangeNotifier {
     notifyListeners();
   }
   }
+  Future<Estudiante?> getEstudiante(
+  int id,
+) async {
+  try {
+    return await repository.getEstudiante(id);
+  } on DioException catch (e) {
+    error = ApiErrorHandler.handle(e);
+    notifyListeners();
+    return null;
+  }
+}
+Future<bool> updateEstudiante({
+  required int id,
+  required String name,
+  required String email,
+  required String codigo,
+  String? password,
+}) async {
+  updating = true;
+  error = null;
+
+  notifyListeners();
+
+  try {
+    final estudiante =
+        await repository.updateEstudiante(
+      id: id,
+      name: name,
+      email: email,
+      codigo: codigo,
+      password: password,
+    );
+
+    final index = estudiantes.indexWhere(
+      (e) => e.id == id,
+    );
+
+    if (index != -1) {
+      estudiantes[index] = estudiante;
+    }
+
+    return true;
+  } on DioException catch (e) {
+    error = ApiErrorHandler.handle(e);
+    return false;
+  } catch (e) {
+    error = "Error inesperado";
+    return false;
+  } finally {
+    updating = false;
+    notifyListeners();
+  }
+}
 }  

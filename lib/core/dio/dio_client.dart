@@ -33,7 +33,7 @@ class DioClient {
         onError: (error, handler) async {
           if (error.response?.statusCode == 401) {
             await SecureStorage.clear();
-            redirectToLogin(); // 🔥 usa GoRouter, sin contexto
+            redirectToLogin(); 
           }
           return handler.next(error);
         },
