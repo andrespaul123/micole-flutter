@@ -27,6 +27,7 @@ class _EstudianteCreateScreenState extends State<EstudianteCreateScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
+      appBar: AppBar(title: const Text('Crear Estudiante')),
       body: Center(
   child: SingleChildScrollView(
     padding: const EdgeInsets.all(20),

@@ -9,6 +9,7 @@ class SubjectViewModel extends ChangeNotifier {
 
   bool loading = false;
   bool creating = false;
+  bool updating = false;
   String? error;
   List<Subject> subjects = [];
 
@@ -56,4 +57,114 @@ class SubjectViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<Subject?> getSubjectById(int id) async {
+
+  try {
+
+    return await repository.getSubjectById(id);
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+    notifyListeners();
+
+    return null;
+
+  } catch (_) {
+
+    error = 'Error inesperado';
+
+    notifyListeners();
+
+    return null;
+  }
+}
+Future<bool> updateSubject({
+  required int id,
+  required String name,
+}) async {
+
+  if (updating) return false;
+
+  updating = true;
+
+  error = null;
+
+  notifyListeners();
+
+  try {
+
+    final subject =
+        await repository.updateSubject(
+      id: id,
+      name: name,
+    );
+
+    final index = subjects.indexWhere(
+      (e) => e.id == id,
+    );
+
+    if (index != -1) {
+      subjects[index] = subject;
+    }
+
+    return true;
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+    return false;
+
+  } catch (_) {
+
+    error = 'Error inesperado';
+
+    return false;
+
+  } finally {
+
+    updating = false;
+
+    notifyListeners();
+  }
+}
+Future<bool> deleteSubject(int id) async {
+
+  loading = true;
+
+  error = null;
+
+  notifyListeners();
+
+  try {
+
+    await repository.deleteSubject(id);
+
+    subjects.removeWhere(
+      (e) => e.id == id,
+    );
+
+    return true;
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+    return false;
+
+  } catch (_) {
+
+    error = 'Error inesperado';
+
+    return false;
+
+  } finally {
+
+    loading = false;
+
+    notifyListeners();
+  }
+}
 }

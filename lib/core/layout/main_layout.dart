@@ -294,7 +294,7 @@ class _MainLayoutState extends State<MainLayout> {
         _MenuItem('Colegios', Icons.school_outlined, '/colegios'),
         _MenuItem('Más', Icons.menu, '/more'),
       ];
-    } else if (role == 'profesor' || role == 'estudiante') {
+    } else if (role == 'profesor' || role == 'estudiante'|| role == 'padre') {
       tabs = [
         _MenuItem('Inicio', Icons.home_outlined, '/home'),
         _MenuItem('Avisos', Icons.campaign_outlined, '/circulares'),
@@ -361,11 +361,18 @@ class _MainLayoutState extends State<MainLayout> {
           _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
           
         ];
+        case 'padre':
+        return [
+          _MenuItem('Inicio', Icons.home_outlined, '/home'),
+          _MenuItem('Mis Hijos',Icons.school_outlined,'/mis-hijos',),
+          _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
+        ];
 
       case 'estudiante':
         return [
           _MenuItem('Inicio', Icons.home_outlined, '/home'),
           _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
+          _MenuItem('Mi Horario', Icons.schedule_outlined, '/mi-horario'),
         ];
 
       case 'director':

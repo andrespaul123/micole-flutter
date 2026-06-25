@@ -112,7 +112,11 @@ class ClaseDashboardScreen extends StatelessWidget {
       'Libro de Calificaciones',
     ),
   ),
+  
 ),
+
+const SizedBox(height: 14),
+
 
 SizedBox(
   width: double.infinity,

@@ -37,6 +37,7 @@ class _ProfesorCreateScreenState extends State<ProfesorCreateScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
+      appBar: AppBar(title: const Text('Crear Profesor')),
 
       body: Center(
         child: SingleChildScrollView(

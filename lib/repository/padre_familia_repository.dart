@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import '../models/padre_familia.dart';
+import '../models/estudiante.dart';
+import '../models/padre_hijo.dart';
 
 class PadreFamiliaRepository {
   final Dio _dio;
@@ -44,6 +46,19 @@ class PadreFamiliaRepository {
     response.data,
   );
 }
+Future<List<PadreHijo>> getMisHijos() async {
+
+  final response = await _dio.get(
+    "/padre/mis-hijos",
+  );
+
+  final List lista =
+      response.data["estudiantes"];
+
+  return lista
+      .map((e) => PadreHijo.fromJson(e))
+      .toList();
+}
 
 Future<PadreFamilia> updatePadre({
   required int id,
@@ -67,5 +82,39 @@ Future<PadreFamilia> updatePadre({
   return PadreFamilia.fromJson(
     response.data["data"],
   );
+}
+Future<void> asignarEstudiante({
+  required int padreId,
+  required int estudianteId,
+  String? parentesco,
+}) async {
+
+  await _dio.post(
+    '/padre-familias/asignar-estudiante',
+    data: {
+      "padre_familia_id": padreId,
+      "estudiante_id": estudianteId,
+      "parentesco": parentesco,
+    },
+  );
+}
+
+Future<List<Estudiante>> getEstudiantesPadre(
+  int padreId,
+) async {
+
+  final response = await _dio.get(
+    '/padre-familias/$padreId/estudiantes',
+  );
+
+  final List data = response.data["estudiantes"];
+
+  return data
+      .map((e) => Estudiante(
+            id: e["id"],
+            codigoEstudiante: e["codigo_estudiante"],
+            name: e["nombre"],
+          ))
+      .toList();
 }
 }

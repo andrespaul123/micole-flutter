@@ -69,10 +69,8 @@ class _EstudianteEditScreenState
 
     return Scaffold(
 
-      backgroundColor: const Color(
-        0xFFF5F7FB,
-      ),
-
+      backgroundColor: const Color( 0xFFF5F7FB,),
+      appBar: AppBar(title: const Text('Editar Estudiante')),
       body: Center(
 
         child: SingleChildScrollView(
@@ -140,15 +138,14 @@ class _EstudianteEditScreenState
                     const SizedBox(height: 16),
 
                    AuthInput(
-  controller: passwordController,
-  label: "Nueva contraseña (opcional)",
-  icon: Icons.lock,
-  obscure: true,
-  validator: (value) {
-    return null;
-  },
-),
-
+                      controller: passwordController,
+                      label: "Nueva contraseña (opcional)",
+                      icon: Icons.lock,
+                      obscure: true,
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
                     const SizedBox(height: 16),
 
                     AuthInput(

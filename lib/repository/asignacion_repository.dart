@@ -50,7 +50,7 @@ class AsignacionRepository {
     });
   }
 
-  Future<void> crearAsignacion({
+ /*  Future<void> crearAsignacion({
     required int periodoId,
     required int profesorId,
     required int subjectId,
@@ -73,7 +73,35 @@ class AsignacionRepository {
       },
     );
   }
-
+ */
+  
+  Future<void> crearAsignacion({
+  required int periodoId,
+  required int profesorId,
+  required int subjectId,
+  required int cursoId,
+  required int paraleloId,
+  required String dia,
+  required String horaInicio,
+  required String horaFin,
+}) async {
+  await _dio.post(
+    '/periodos/$periodoId/asignaciones',
+    data: {
+      'profesor_id': profesorId,
+      'subject_id': subjectId,
+      'curso_id': cursoId,
+      'paralelo_id': paraleloId,
+      'horarios': [
+        {
+          'dia': dia,
+          'hora_inicio': horaInicio,
+          'hora_fin': horaFin,
+        }
+      ]
+    },
+  );
+}
   Future<List<MiClase>> getMisClases(
     int periodoId,
   ) async {

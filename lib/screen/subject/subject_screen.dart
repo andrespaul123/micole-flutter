@@ -22,9 +22,8 @@ class _SubjectScreenState extends State<SubjectScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-      appBar: AppBar(title: const Text('Nueva Materia')),
+      appBar: AppBar(title: const Text('Crear Materia')),
 
-      // 🔥 YA NO bloqueamos toda la pantalla
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -50,16 +49,16 @@ class _SubjectScreenState extends State<SubjectScreen> {
                        validator: (v) => v!.isEmpty ? 'Campo requerido' : null, 
                     ),
                     if (vm.error != null) ...[
-  const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-  Text(
-    vm.error!,
-    style: const TextStyle(
-      color: Colors.red,
-      fontWeight: FontWeight.w600,
-    ),
-  ),
-],
+                  Text(
+                    vm.error!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
 
                     const SizedBox(height: 30),
 
@@ -86,14 +85,8 @@ class _SubjectScreenState extends State<SubjectScreen> {
                                     ),
                                   );
 
-                                  context.go('/materias'); // 🔥 navegación limpia
-                                } /* else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Error al crear'),
-                                    ),
-                                  );
-                                } */
+                                  context.go('/materias'); 
+                                } 
                               },
 
                         child: vm.creating

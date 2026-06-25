@@ -9,14 +9,15 @@ class AgendaArchivo {
     required this.url,
   });
 
-  factory AgendaArchivo.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory AgendaArchivo.fromJson(Map<String, dynamic> json) {
+    const baseUrl = 'http://192.168.100.206:8000';
+    final rawUrl = json['url'] ?? '';
+    final fullUrl = rawUrl.startsWith('http') ? rawUrl : '$baseUrl$rawUrl';
+
     return AgendaArchivo(
       id: json['id'],
-      nombreOriginal:
-          json['nombre_original'] ?? '',
-      url: json['url'] ?? '',
+      nombreOriginal: json['nombre_original'] ?? '',
+      url: fullUrl,
     );
   }
 }

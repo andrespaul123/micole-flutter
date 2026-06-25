@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../../viewmodels/auth_viewmodel.dart';
 import '../../viewmodels/tenant_viewmodel.dart';
 
@@ -29,7 +28,7 @@ class HomeDashboard extends StatelessWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: 1200, // 🔥 limita ancho en web
+              maxWidth: 1200, 
             ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -183,10 +182,12 @@ class HomeDashboard extends StatelessWidget {
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: columns,
                             crossAxisSpacing: 14,
-                            mainAxisSpacing: 14,
-
-                            // 🔥 altura mucho más compacta
-                            childAspectRatio: 1.55,
+                            mainAxisSpacing: 14,                            
+                           childAspectRatio:
+                      MediaQuery.of(context).size.width < 600
+                          ? 1.0
+                          : 1.55,
+                            
                           ),
                           itemBuilder: (context, index) {
                             final items = [

@@ -27,8 +27,7 @@ class _PadreCreateScreenState extends State<PadreCreateScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-
-      // 🔥 YA NO usamos vm.loading aquí
+      appBar: AppBar(title: const Text('Crear Padre de Familia')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),

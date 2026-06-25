@@ -83,7 +83,7 @@ class _ProfesorEditScreenState
 
       backgroundColor:
           const Color(0xFFF5F7FB),
-
+      appBar: AppBar(title: const Text('Editar Profesor')),
       body: loading
 
           ? const Center(

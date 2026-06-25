@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import '../core/utils/api_error_handler.dart';
 import '../models/padre_familia.dart';
 import '../repository/padre_familia_repository.dart';
+import '../models/estudiante.dart';
+import '../models/padre_hijo.dart';
 
 class PadreFamiliaViewModel extends ChangeNotifier {
   final PadreFamiliaRepository repository;
@@ -11,8 +13,11 @@ class PadreFamiliaViewModel extends ChangeNotifier {
   bool loading = false;
   bool creating = false;
   bool updating = false;
+  bool assigning = false;
   String? error;
   List<PadreFamilia> padres = [];
+  List<Estudiante> estudiantesPadre = [];
+  List<PadreHijo> misHijos = [];
 
   Future<void> loadPadres() async {
     loading = true;
@@ -97,7 +102,33 @@ class PadreFamiliaViewModel extends ChangeNotifier {
     return null;
   }
 }
+Future<void> loadMisHijos() async {
 
+  loading = true;
+  error = null;
+
+  notifyListeners();
+
+  try {
+
+    misHijos =
+        await repository.getMisHijos();
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+  } catch (e) {
+
+    error = "Error inesperado";
+
+  } finally {
+
+    loading = false;
+
+    notifyListeners();
+  }
+}
 Future<bool> updatePadre({
   required int id,
   required String name,
@@ -148,6 +179,80 @@ Future<bool> updatePadre({
   } finally {
 
     updating = false;
+
+    notifyListeners();
+  }
+}
+Future<void> loadEstudiantesPadre(
+  int padreId,
+) async {
+
+  loading = true;
+  error = null;
+
+  notifyListeners();
+
+  try {
+
+    estudiantesPadre =
+        await repository.getEstudiantesPadre(
+      padreId,
+    );
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+  } catch (e) {
+
+    error = "Error inesperado";
+
+  } finally {
+
+    loading = false;
+
+    notifyListeners();
+  }
+}
+Future<bool> asignarEstudiante({
+  required int padreId,
+  required int estudianteId,
+  String? parentesco,
+}) async {
+
+  if (assigning) return false;
+
+  assigning = true;
+
+  error = null;
+
+  notifyListeners();
+
+  try {
+
+    await repository.asignarEstudiante(
+      padreId: padreId,
+      estudianteId: estudianteId,
+      parentesco: parentesco,
+    );
+
+    return true;
+
+  } on DioException catch (e) {
+
+    error = ApiErrorHandler.handle(e);
+
+    return false;
+
+  } catch (e) {
+
+    error = "Error inesperado";
+
+    return false;
+
+  } finally {
+
+    assigning = false;
 
     notifyListeners();
   }

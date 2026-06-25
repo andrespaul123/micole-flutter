@@ -80,6 +80,19 @@ class _PadreListScreenState extends State<PadreListScreen> {
                        trailing: Row(
   mainAxisSize: MainAxisSize.min,
   children: [
+    IconButton(
+  icon: const Icon(
+    Icons.school,
+    color: Colors.green,
+  ),
+  tooltip: "Asignar estudiante",
+  onPressed: () {
+
+    context.go(
+      '/padres/${p.id}/estudiantes',
+    );
+  },
+),
 
     // BOTÓN EDITAR
     IconButton(

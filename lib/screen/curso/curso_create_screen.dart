@@ -25,6 +25,7 @@ class _CursoCreateScreenState extends State<CursoCreateScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
+      appBar: AppBar(title: const Text('Crear Curso')),
 
       body: Center(
         child: SingleChildScrollView(
@@ -72,16 +73,16 @@ class _CursoCreateScreenState extends State<CursoCreateScreen> {
                       validator: (_) => null,
                     ),
                     if (vm.error != null) ...[
-  const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-  Text(
-    vm.error!,
-    style: const TextStyle(
-      color: Colors.red,
-      fontWeight: FontWeight.w600,
-    ),
-  ),
-],
+                Text(
+                  vm.error!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
                     const SizedBox(height: 20),
 
                     SizedBox(
@@ -115,7 +116,6 @@ class _CursoCreateScreenState extends State<CursoCreateScreen> {
                                 } 
                               },
 
-                        // 🔥 loader solo en botón
                         child: vm.creating
                             ? const SizedBox(
                                 height: 18,

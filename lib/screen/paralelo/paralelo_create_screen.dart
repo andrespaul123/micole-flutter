@@ -41,7 +41,7 @@ class _ParaleloCreateScreenState extends State<ParaleloCreateScreen> {
       backgroundColor: const Color(0xFFF5F7FB),
 
       appBar: AppBar(
-        title: const Text('Nuevo Paralelo'),
+        title: const Text('Crear Paralelo'),
       ),
 
       body: vm.creating

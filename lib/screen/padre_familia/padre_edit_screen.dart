@@ -84,7 +84,7 @@ class _PadreEditScreenState
 
       backgroundColor:
           const Color(0xFFF5F7FB),
-
+     appBar: AppBar(title: const Text('Editar Padre de Familia')),
       body: loading
 
           ? const Center(

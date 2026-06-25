@@ -40,6 +40,7 @@ class _PeriodoEvaluacionListScreenState
         context.watch<PeriodoEvaluacionViewModel>();
 
     return Scaffold(
+      appBar: AppBar(title: const Text('Periodos de Evaluación')),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
