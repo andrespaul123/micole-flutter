@@ -1,68 +1,79 @@
+import 'package:front_colegio/feature/agenda/screens/agenda_create_screen.dart';
+import 'package:front_colegio/feature/agenda/screens/agenda_detail_screen.dart';
+import 'package:front_colegio/feature/agenda/screens/agenda_list_screen.dart';
+import 'package:front_colegio/feature/anecdotario/screens/anecdotario_create_screen.dart';
+import 'package:front_colegio/feature/anecdotario/screens/anecdotario_list_screen.dart';
+import 'package:front_colegio/feature/asistencia/screens/asistencia_create_screen.dart';
+import 'package:front_colegio/feature/criterio/screens/CriterioScreen.dart';
+import 'package:front_colegio/feature/estudiante/estudiante_agenda/entrega_tarea/screen/estudiante_entrega_tarea_screen.dart';
+import 'package:front_colegio/feature/estudiante/estudiante_agenda/screens/estudiante_agenda_screen.dart';
+import 'package:front_colegio/feature/estudiante/estudiante_biblioteca/screens/estudiante_biblioteca_screen.dart';
+import 'package:front_colegio/feature/estudiante/estudiante_horario/screens/estudiante_horario_screen.dart';
+import 'package:front_colegio/feature/estudiante/estudiante_materias/screens/estudiante_materia_detalle_screen.dart';
+import 'package:front_colegio/feature/estudiante/estudiante_materias/screens/estudiante_materias_screen.dart';
+import 'package:front_colegio/feature/estudiante/screens/estudiante_edit_screen.dart';
+import 'package:front_colegio/feature/libro_calificaciones/screens/libro_calificaciones_screen.dart';
+import 'package:front_colegio/feature/padre/screens/mis_hijos_screen.dart';
+import 'package:front_colegio/feature/padre/screens/padre_asignar_estudiante_screen.dart';
+import 'package:front_colegio/feature/padre/screens/padre_dashboard_screen.dart';
+import 'package:front_colegio/feature/padre/screens/padre_edit_screen.dart';
+import 'package:front_colegio/feature/padre_agenda/padre_agenda.dart';
+import 'package:front_colegio/feature/padre_agenda/screens/padre_agenda_screen.dart';
+import 'package:front_colegio/feature/padre_anecdotario/screens/padre_anecdotario_screen.dart';
+import 'package:front_colegio/feature/padre_asistencia/screens/padre_asistencia_screen.dart';
+import 'package:front_colegio/feature/padre_nota/screens/padre_nota_screen.dart';
+import 'package:front_colegio/feature/profesor/screens/asignar_materia_screen.dart';
+import 'package:front_colegio/feature/profesor/screens/clase_dashboard_screen.dart';
+import 'package:front_colegio/feature/profesor/screens/mis_clases_screen.dart';
+import 'package:front_colegio/feature/profesor/screens/profesor_edit_screen.dart';
+import 'package:front_colegio/feature/subject/screens/subject_edit_screen.dart';
 import 'package:go_router/go_router.dart';
-import '../../viewmodels/auth_viewmodel.dart';
-import '../../models/profesor.dart';
-import '../../models/curso.dart';
+import '../../feature/profesor/profesor.dart';
+import '../../feature/curso/curso.dart';
+import '../../feature/login/auth_viewmodel.dart';
 // Auth
-import '../../screen/login/login_screen.dart';
-import '../../screen/login/register_screen.dart';
+import '../../feature/login/screens/login_screen.dart';
+import '../../feature/login/screens/register_screen.dart';
 // Director
-import '../../screen/subject/subject_list_screen.dart';
-import '../../screen/subject/subject_screen.dart';
-import '../../screen/director/profesor_list_screen.dart';
-import '../../screen/director/profesor_create_screen.dart';
-import '../../screen/director/asignar_materia_screen.dart';
-import '../../screen/director/asignar_horario_screen.dart';
-import '../../screen/curso/curso_list_screen.dart';
-import '../../screen/curso/curso_create_screen.dart';
-import '../../screen/paralelo/paralelo_list_screen.dart';
-import '../../screen/paralelo/paralelo_create_screen.dart';
-import '../../screen/periodo_academico/periodo_list_screen.dart';
-import '../../screen/periodo_academico/periodo_create_screen.dart';
-import '../../screen/tenant/my_tenant_screen.dart';
-import '../../screen/tenant/director_tenant_screen.dart';
-import '../../screen/estudiante/estudiante_list_screen.dart';
-import '../../screen/estudiante/estudiante_create_screen.dart';
-import '../../screen/padre_familia/padre_list_screen.dart';
-import '../../screen/padre_familia/padre_create_screen.dart';
-import '../../screen/director/horario_profesor_screen.dart';
-import '../../screen/horario/horario_curso_screen.dart';
-import '../../screen/circular/circular_create_screen.dart';
-import '../../screen/circular/circular_list_screen.dart';
-import '../../screen/circular/circular_detail_screen.dart';
-import '../../screen/inscripcion/inscripcion_create_screen.dart';
-import '../../screen/inscripcion/inscripcion_list_screen.dart';
-import '../../screen/profesor/mis_clases_screen.dart';
-import '../../screen/profesor/clase_dashboard_screen.dart';
-import '../../screen/profesor/anecdotario_list_screen.dart';
-import '../../screen/profesor/anecdotario_create_screen.dart';
-import '../../screen/profesor/asistencia_create_screen.dart';
-import '../../screen/agenda/agenda_list_screen.dart';
-import '../../screen/agenda/agenda_create_screen.dart';
-import '../../screen/agenda/agenda_detail_screen.dart';
-import '../../screen/modulos/module_screen.dart';
-import '../../screen/estudiante/estudiante_edit_screen.dart';
-import '../../screen/criterio/CriterioScreen.dart';
-import '../../screen/periodoEvaluacion/PeriodoEvaluacionCreateScreen.dart';
-import '../../screen/periodoEvaluacion/PeriodoEvaluacionListScreen.dart';
-import '../../screen/libro_calificaciones/libro_calificaciones_screen.dart';
-import '../../screen/padre_familia/padre_edit_screen.dart';
-import '../../screen/director/profesor_edit_screen.dart';
-import '../../screen/subject/subject_edit_screen.dart';
-import '../../screen/padre_familia/padre_asignar_estudiante_screen.dart';
-import '../../screen/padre_familia/mis_hijos_screen.dart';
-import '../../screen/padre_familia/padre_dashboard_screen.dart';
-import '../../screen/padre_familia/padre_agenda_screen.dart';
-import '../../screen/padre_familia/padre_asistencia_screen.dart';
-import '../../screen/padre_familia/padre_anecdotario_screen.dart';
-import '../../screen/padre_familia/padre_nota_screen.dart';
-// Super Admin
-import '../../screen/tenant/tenant_list_screen.dart';
-import '../../screen/tenant_screen.dart';
+import '../../feature/subject/screens/subject_list_screen.dart';
+import '../../feature/subject/screens/subject_screen.dart';
+import '../../feature/profesor/screens/profesor_list_screen.dart';
+import '../../feature/profesor/screens/profesor_create_screen.dart';
+
+import '../../feature/estudiante/screens/estudiante_list_screen.dart';
+import '../../feature/estudiante/screens/estudiante_create_screen.dart';
+import '../../feature/padre/screens/padre_list_screen.dart';
+import '../../feature/padre/screens/padre_create_screen.dart';
+
+import '../../feature/curso/screens/curso_list_screen.dart';
+import '../../feature/curso/screens/curso_create_screen.dart';
+import '../../feature/paralelo/screens/paralelo_list_screen.dart';
+import '../../feature/paralelo/screens/paralelo_create_screen.dart';
+import '../../feature/periodo_academico/screens/periodo_list_screen.dart';
+import '../../feature/periodo_academico/screens/periodo_create_screen.dart';
+import '../../feature/periodo_evaluacion/screens/PeriodoEvaluacionCreateScreen.dart';
+import '../../feature/periodo_evaluacion/screens/PeriodoEvaluacionListScreen.dart';
+
+import '../../feature/tenant/screens/tenant_list_screen.dart';
+import '../../feature/tenant/screens/tenant_screen.dart';
+import '../../feature/tenant/screens/my_tenant_screen.dart';
+import '../../feature/tenant/screens/director_tenant_screen.dart';
+
+import '../../feature/modulos/screens/module_screen.dart';
+import '../../feature/circulares/screens/circular_list_screen.dart';
+import '../../feature/circulares/screens/circular_create_screen.dart';
+import '../../feature/circulares/screens/circular_detail_screen.dart';
+
+import '../../feature/inscripcion/screens/inscripcion_list_screen.dart';
+import '../../feature/inscripcion/screens/inscripcion_create_screen.dart';
+
+import '../../feature/asignacion_horario/screens/horario_curso_screen.dart';
+import '../../feature/asignacion_horario/screens/horario_profesor_screen.dart';
+import '../../feature/asignacion_horario/screens/asignar_horario_screen.dart';
 
 // Layout
 import '../layout/main_layout.dart';
 import '../layout/home_dashboard.dart';
-import '../../screen/estudiante/estudiante_horario_screen.dart';
 late GoRouter _routerInstance;
 
 /// Redirige al login sin contexto (usado en el interceptor 401 de Dio).
@@ -591,6 +602,78 @@ GoRoute(
   path: '/mi-horario',
   builder: (_, __) => const EstudianteHorarioScreen(),
 ),
+GoRoute(
+  path: '/estudiante/materias',
+  builder: (_, __) => const EstudianteMateriasScreen(),
+  routes: [
+    GoRoute(
+      path: ':asignacionId',
+      builder: (_, state) => EstudianteMateriaDetalleScreen(
+        asignacionId: int.parse(state.pathParameters['asignacionId']!),
+      ),
+      routes: [
+        GoRoute(
+          path: 'pendientes',
+          builder: (_, state) =>  EstudianteAgendaScreen(
+            asignacionId: int.parse(state.pathParameters['asignacionId']!),
+            tipo: "tarea",
+          ),
+          routes: [
+            GoRoute(
+              path: ':agendaId/entrega',
+              builder: (_, state) {
+                final agenda = state.extra as PadreAgenda;
+                return EstudianteEntregaTareaScreen(agenda: agenda);
+              },
+            ),
+          ],
+        ),
+        
+        
+        GoRoute(
+          path: 'biblioteca',
+          builder: (_, state) =>  EstudianteBibliotecaScreen(
+            asignacionId: int.parse(state.pathParameters['asignacionId']!),
+          ),
+        ),
+        GoRoute(
+          path: 'examenes',
+          builder: (_, state) =>  EstudianteAgendaScreen(
+            asignacionId: int.parse(state.pathParameters['asignacionId']!),
+             tipo: "examen",
+          ),
+         
+        ),
+      ],
+    ),
+  ],
+),
+/* GoRoute(
+  path: '/estudiante/materias',
+  builder: (_, __) => const EstudianteMateriasScreen(),
+),
+
+GoRoute(
+  path: '/estudiante/materias/:asignacionId',
+  builder: (_, state) {
+
+    final asignacionId = int.parse(
+      state.pathParameters['asignacionId']!,
+    );
+
+    return EstudianteMateriaDetalleScreen(
+      asignacionId: asignacionId,
+    );
+  },
+),
+GoRoute(
+  path: '/estudiante/pendientes',
+  builder: (_, __) => const EstudianteAgendaScreen(),
+),
+GoRoute(
+  path: '/estudiante/biblioteca',
+  builder: (_, __) => const EstudianteBibliotecaScreen(),
+), */
         /*   GoRoute(
             path: '/mis-clases',
             builder: (_, __) => const MisClasesScreen(),

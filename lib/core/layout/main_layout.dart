@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../viewmodels/auth_viewmodel.dart';
-import '../../viewmodels/tenant_viewmodel.dart';
+import '../../feature/login/auth_viewmodel.dart';
+import '../../feature/tenant/tenant_viewmodel.dart';
 
 class MainLayout extends StatefulWidget {
   final Widget child;
@@ -371,8 +371,10 @@ class _MainLayoutState extends State<MainLayout> {
       case 'estudiante':
         return [
           _MenuItem('Inicio', Icons.home_outlined, '/home'),
-          _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
           _MenuItem('Mi Horario', Icons.schedule_outlined, '/mi-horario'),
+          _MenuItem('Mis Materias', Icons.menu_book_outlined, '/estudiante/materias'),
+          _MenuItem('Circulares', Icons.campaign_outlined, '/circulares'),
+          
         ];
 
       case 'director':

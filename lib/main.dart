@@ -1,61 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:front_colegio/feature/estudiante/estudiante_agenda/entrega_tarea/entrega_tarea_repository.dart';
+import 'package:front_colegio/feature/estudiante/estudiante_agenda/entrega_tarea/entrega_tarea_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'core/router/app_router.dart';
 import 'core/dio/dio_client.dart';
 
 // Repositories
-import 'repository/auth_repository.dart';
-import 'repository/tenant_repository.dart';
-import 'repository/subject_repository.dart';
-import 'repository/curso_repository.dart';
-import 'repository/paralelo_repository.dart';
-import 'repository/asignacion_repository.dart';
-import 'repository/academic_period_repository.dart';
-import 'repository/profesor_repository.dart';
-import 'repository/estudiante_repository.dart';
-import 'repository/padre_familia_repository.dart';
-import 'repository/circular_repository.dart';
-import 'repository/inscripcion_repository.dart';
-import 'repository/anecdotario_repository.dart';
-import 'repository/asistencia_repository.dart';
-import 'repository/agenda_repository.dart';
-// ViewModels
-import 'viewmodels/auth_viewmodel.dart';
-import 'viewmodels/tenant_viewmodel.dart';
-import 'viewmodels/subject_repository.dart';
-import 'viewmodels/curso_viewmodel.dart';
-import 'viewmodels/paralelo_viewmodel.dart';
-import 'viewmodels/asignacion_viewmodel.dart';
-import 'viewmodels/academic_period_viewmodel.dart';
-import 'viewmodels/profesor_viewmodel.dart';
-import 'viewmodels/estudiante_viewmodel.dart';
-import 'viewmodels/padre_familia_viewmodel.dart';
-import 'viewmodels/circular_viewmodel.dart';
+import 'feature/login/auth_repository.dart';
+import 'feature/login/auth_viewmodel.dart';
+import 'feature/tenant/tenant_repository.dart';
+import 'feature/tenant/tenant_viewmodel.dart';
+import 'feature/subject/subject_repository.dart';
+import 'feature/subject/subject_viewmodel.dart';
+import 'feature/curso/curso_repository.dart';
+import 'feature/curso/curso_viewmodel.dart';
+import 'feature/paralelo/paralelo_repository.dart';
+import 'feature/paralelo/paralelo_viewmodel.dart';
+import 'feature/asignacion_horario/asignacion_repository.dart';
+import 'feature/asignacion_horario/asignacion_viewmodel.dart';
+import 'feature/profesor/profesor_repository.dart';
+import 'feature/profesor/profesor_viewmodel.dart';
+import 'feature/estudiante/estudiante_repository.dart';
+import 'feature/estudiante/estudiante_viewmodel.dart';
+import 'feature/padre/padre_familia_repository.dart';
+import 'feature/padre/padre_familia_viewmodel.dart';
+import 'feature/periodo_academico/academic_period_repository.dart';
+import 'feature/periodo_academico/academic_period_viewmodel.dart';
+import 'feature/periodo_evaluacion/periodo_evaluacion_repository.dart';
+import 'feature/periodo_evaluacion/periodo_evaluacion_viewmodel.dart';
+import 'feature/circulares/circular_repository.dart';
+import 'feature/circulares/circular_viewmodel.dart';
+import 'feature/inscripcion/inscripcion_repository.dart';
+import 'feature/inscripcion/inscripcion_viewmodel.dart';
+import 'feature/estudiante/estudiante_horario/estudiante_horario_repository.dart';
+import 'feature/estudiante/estudiante_horario/estudiante_horario_viewmodel.dart';
+import 'feature/estudiante/estudiante_materias/estudiante_materia_repository.dart';
+import 'feature/estudiante/estudiante_materias/estudiante_materia_viewmodel.dart';
+import 'feature/estudiante/estudiante_agenda/estudiante_agenda_repository.dart';
+import 'feature/estudiante/estudiante_agenda/estudiante_agenda_viewmodel.dart';
+import 'feature/anecdotario/anecdotario_repository.dart';
+import 'feature/anecdotario/anecdotario_viewmodel.dart';
+import 'feature/asistencia/asistencia_repository.dart';
+import 'feature/asistencia/asistencia_viewmodel.dart';
+import 'feature/agenda/agenda_repository.dart';
+import 'feature/agenda/agenda_viewmodel.dart';
+import 'feature/modulos/module_repository.dart';
+import 'feature/modulos/module_viewmodel.dart';
+import 'feature/criterio/criterio_repository.dart';
+import 'feature/criterio/criterio_viewmodel.dart';
+import 'feature/libro_calificaciones/libro_calificaciones_repository.dart';
+import 'feature/libro_calificaciones/libro_calificaciones_viewmodel.dart';
+import 'feature/padre_agenda/padre_agenda_repository.dart';
+import 'feature/padre_agenda/padre_agenda_viewmodel.dart';
+import 'feature/padre_asistencia/padre_asistencia_repository.dart';
+import 'feature/padre_asistencia/padre_asistencia_viewmodel.dart';
+import 'feature/padre_anecdotario/padre_anecdotario_repository.dart';
+import 'feature/padre_anecdotario/padre_anecdotario_viewmodel.dart';
+import 'feature/padre_nota/padre_nota_repository.dart';
+import 'feature/padre_nota/padre_nota_viewmodel.dart';
+import  'feature/estudiante/estudiantes_clase_viewmodel.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'viewmodels/inscripcion_viewmodel.dart';
-import 'viewmodels/estudiantes_clase_viewmodel.dart';
-import 'viewmodels/anecdotario_viewmodel.dart';
-import 'viewmodels/asistencia_viewmodel.dart';
-import 'viewmodels/agenda_viewmodel.dart';
-import 'viewmodels/module_viewmodel.dart';
-import 'repository/module_repository.dart';
-import 'viewmodels/criterio_viewmodel.dart';
-import 'repository/criterio_repository.dart';
-import 'viewmodels/periodo_evaluacion_viewmodel.dart';
-import 'repository/periodo_evaluacion_repository.dart';
-import 'viewmodels/libro_calificaciones_viewmodel.dart';
-import 'repository/libro_calificaciones_repository.dart';
-import 'viewmodels/padre_agenda_viewmodel.dart';
-import 'repository/padre_agenda_repository.dart';
-import 'viewmodels/padre_asistencia_viewmodel.dart';
-import 'repository/padre_asistencia_repository.dart';
-import 'viewmodels/padre_anecdotario_viewmodel.dart';
-import 'repository/padre_anecdotario_repository.dart';
-import 'viewmodels/padre_nota_viewmodel.dart';
-import 'repository/padre_nota_repository.dart';
-import 'viewmodels/estudiante_horario_viewmodel.dart';
-import 'repository/estudiante_horario_repository.dart';
+
 void main() async {
   setUrlStrategy(PathUrlStrategy());
   WidgetsFlutterBinding.ensureInitialized();
@@ -197,10 +203,26 @@ void main() async {
     repository: EstudianteHorarioRepository(dio),
   ),
 ),
+ChangeNotifierProvider(
+  create: (_) =>
+      EstudianteMateriaViewModel(
+    repository:
+        EstudianteMateriaRepository(
+      dio,
+    ),
+  ),
+),
         ChangeNotifierProvider(
           create:
               (_) => PadreNotaViewModel(repository: PadreNotaRepository(dio)),
         ),
+        ChangeNotifierProvider(create: 
+        (_) => EstudianteAgendaViewModel(repository: EstudianteAgendaRepository(dio))),
+ChangeNotifierProvider(
+  create: (_) => EntregaTareaViewModel(
+    repository: EntregaTareaRepository(dio),
+  ),
+),
       ],
       child: MyApp(router: router),
     ),
