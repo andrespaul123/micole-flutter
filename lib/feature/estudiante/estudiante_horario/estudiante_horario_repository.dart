@@ -1,5 +1,3 @@
-// repository/estudiante_horario_repository.dart
-
 import 'package:dio/dio.dart';
 import 'horario_curso.dart';
 

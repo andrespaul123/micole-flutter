@@ -92,8 +92,6 @@ class _CursoCreateScreenState extends State<CursoCreateScreen> {
                             ? null
                             : () async {
                                 if (!_formKey.currentState!.validate()) return;
-
-                                // 🔥 UX: quita teclado
                                 FocusScope.of(context).unfocus();
 
                                 final success = await vm.createCurso(

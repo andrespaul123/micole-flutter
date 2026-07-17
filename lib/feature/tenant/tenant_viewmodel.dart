@@ -22,14 +22,9 @@ class TenantViewModel extends ChangeNotifier {
 
   List<Tenant> tenants = [];
 
-  TenantViewModel({
-    required this.repository,
-  });
+  TenantViewModel({required this.repository});
 
-  // =========================
   // LISTAR TENANTS
-  // =========================
-
   Future<void> loadTenants() async {
     loading = true;
 
@@ -38,29 +33,19 @@ class TenantViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-
       tenants = await repository.getTenants();
-
     } on DioException catch (e) {
-
       error = ApiErrorHandler.handle(e);
-
     } catch (e) {
-
       error = 'Error inesperado';
-
     } finally {
-
       loading = false;
 
       notifyListeners();
     }
   }
 
-  // =========================
   // MI TENANT
-  // =========================
-
   Future<void> loadMyTenant() async {
     loading = true;
 
@@ -69,19 +54,12 @@ class TenantViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-
       currentTenant = await repository.getMyTenant();
-
     } on DioException catch (e) {
-
       error = ApiErrorHandler.handle(e);
-
     } catch (e) {
-
       error = 'Error inesperado';
-
     } finally {
-
       loading = false;
 
       notifyListeners();
@@ -99,7 +77,6 @@ class TenantViewModel extends ChangeNotifier {
     required String directorEmail,
     required String password,
   }) async {
-
     if (creating) return false;
 
     creating = true;
@@ -109,9 +86,7 @@ class TenantViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-
-      final createdTenant =
-          await repository.createTenant(
+      final createdTenant = await repository.createTenant(
         name: name,
         slug: slug,
         directorName: directorName,
@@ -120,32 +95,26 @@ class TenantViewModel extends ChangeNotifier {
       );
 
       tenant = createdTenant;
-      if(createdTenant.tenant != null) {
-      tenants.add(createdTenant.tenant!);
+      if (createdTenant.tenant != null) {
+        tenants.add(createdTenant.tenant!);
       }
       return true;
-
     } on DioException catch (e) {
-
       error = ApiErrorHandler.handle(e);
 
       return false;
-
     } catch (e) {
-
       error = 'Error inesperado';
 
       return false;
-
     } finally {
-
       creating = false;
 
       notifyListeners();
     }
   }
-  Future<bool> uploadLogo(XFile file) async {
 
+  Future<bool> uploadLogo(XFile file) async {
     if (uploading) return false;
 
     uploading = true;
@@ -155,33 +124,22 @@ class TenantViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-
       final bytes = await file.readAsBytes();
 
-      final success =
-          await repository.uploadLogo(
-        bytes,
-        file.name,
-      );
+      final success = await repository.uploadLogo(bytes, file.name);
 
       await loadMyTenant();
 
       return success;
-
     } on DioException catch (e) {
-
       error = ApiErrorHandler.handle(e);
 
       return false;
-
     } catch (e) {
-
       error = 'Error inesperado';
 
       return false;
-
     } finally {
-
       uploading = false;
 
       notifyListeners();
@@ -192,7 +150,6 @@ class TenantViewModel extends ChangeNotifier {
     required String name,
     required String slug,
   }) async {
-
     if (updating) return false;
 
     updating = true;
@@ -202,38 +159,27 @@ class TenantViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-
-      final updated =
-          await repository.updateTenant(
-        name: name,
-        slug: slug,
-      );
+      final updated = await repository.updateTenant(name: name, slug: slug);
 
       currentTenant = updated;
 
       return true;
-
     } on DioException catch (e) {
-
       error = ApiErrorHandler.handle(e);
 
       return false;
-
     } catch (e) {
-
       error = 'Error inesperado';
 
       return false;
-
     } finally {
-
       updating = false;
 
       notifyListeners();
     }
   }
-  Future<bool> deleteTenant(int id) async {
 
+  Future<bool> deleteTenant(int id) async {
     loading = true;
 
     error = null;
@@ -241,29 +187,20 @@ class TenantViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-
       await repository.deleteTenant(id);
 
-      tenants.removeWhere(
-        (t) => t.id == id,
-      );
+      tenants.removeWhere((t) => t.id == id);
 
       return true;
-
     } on DioException catch (e) {
-
       error = ApiErrorHandler.handle(e);
 
       return false;
-
     } catch (e) {
-
       error = 'Error inesperado';
 
       return false;
-
     } finally {
-
       loading = false;
 
       notifyListeners();

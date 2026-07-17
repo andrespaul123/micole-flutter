@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
-
 import 'asignacion.dart';
 import '../periodo_academico/academic_period.dart';
 import '../estudiante/estudiante_horario/horario_curso.dart';
 import 'mi_clase.dart';
-
 import 'asignacion_repository.dart';
 import '../periodo_academico/academic_period_repository.dart';
-
 import '../../core/utils/api_error_handler.dart';
+import 'asignacion_docente.dart';
 
 class AsignacionViewModel extends ChangeNotifier {
   final AsignacionRepository repository;
@@ -20,7 +18,7 @@ class AsignacionViewModel extends ChangeNotifier {
     required this.repository,
     required this.periodoRepository,
   });
-
+bool agregandoHorario = false;
   bool loading = false;
   bool creating = false;
   bool loadingCurso = false;
@@ -36,7 +34,7 @@ class AsignacionViewModel extends ChangeNotifier {
   List<MiClase> misClases = [];
 
   List<AcademicPeriod> periodosProfesor = [];
-
+List<AsignacionDocente> asignacionesProfesor = [];
   AcademicPeriod? periodoSeleccionadoClases;
 
   Future<void> loadPeriodo() async {
@@ -217,4 +215,77 @@ class AsignacionViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> loadAsignacionesProfesor(
+  int profesorId,
+) async {
+  loading = true;
+  error = null;
+
+  notifyListeners();
+
+  try {
+    if (periodoActivo == null) {
+      await loadPeriodo();
+    }
+
+    if (periodoActivo == null) {
+      asignacionesProfesor = [];
+      return;
+    }
+
+    asignacionesProfesor =
+        await repository.getAsignacionesProfesor(
+      periodoId: periodoActivo!.id!,
+      profesorId: profesorId,
+    );
+  } on DioException catch (e) {
+    error = ApiErrorHandler.handle(e);
+  } catch (_) {
+    error = 'Error inesperado';
+  } finally {
+    loading = false;
+    notifyListeners();
+  }
+}
+
+
+Future<bool> agregarHorario({
+  required int asignacionId,
+  required int profesorId,
+  required String dia,
+  required String horaInicio,
+  required String horaFin,
+}) async {
+  if (agregandoHorario) return false;
+
+  agregandoHorario = true;
+  error = null;
+
+  notifyListeners();
+
+  try {
+    await repository.agregarHorario(
+      asignacionId: asignacionId,
+      dia: dia,
+      horaInicio: horaInicio,
+      horaFin: horaFin,
+    );
+
+    await loadAsignacionesProfesor(
+      profesorId,
+    );
+
+    return true;
+  } on DioException catch (e) {
+    error = ApiErrorHandler.handle(e);
+    return false;
+  } catch (_) {
+    error = "Error inesperado";
+    return false;
+  } finally {
+    agregandoHorario = false;
+    notifyListeners();
+  }
+}
 }

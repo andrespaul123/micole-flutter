@@ -7,10 +7,7 @@ import '../padre_nota_viewmodel.dart';
 class PadreNotaScreen extends StatefulWidget {
   final int estudianteId;
 
-  const PadreNotaScreen({
-    super.key,
-    required this.estudianteId,
-  });
+  const PadreNotaScreen({super.key, required this.estudianteId});
 
   @override
   State<PadreNotaScreen> createState() => _PadreNotaScreenState();
@@ -48,8 +45,8 @@ class _PadreNotaScreenState extends State<PadreNotaScreen> {
           return ListView.builder(
             padding: const EdgeInsets.all(12),
             itemCount: vm.periodos.length,
-            itemBuilder: (_, index) =>
-                _PeriodoCard(periodo: vm.periodos[index]),
+            itemBuilder:
+                (_, index) => _PeriodoCard(periodo: vm.periodos[index]),
           );
         },
       ),
@@ -80,10 +77,9 @@ class _PeriodoCard extends StatelessWidget {
             // Título periodo
             Text(
               periodo.periodo,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const Divider(height: 20),
 
@@ -93,17 +89,15 @@ class _PeriodoCard extends StatelessWidget {
               children: [
                 Text(
                   'Materia',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 Text(
                   'Promedio',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),

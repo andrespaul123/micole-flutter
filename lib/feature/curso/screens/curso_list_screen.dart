@@ -53,9 +53,6 @@ class _CursoListScreenState extends State<CursoListScreen> {
           : FloatingActionButton(
               backgroundColor: _purple,
               onPressed: () async {context.go('/cursos/create');},
-               /*  await context.push('/cursos/nuevo'); // 🔥
-                if (mounted) vm.loadCursos();
-              }, */
               child: const Icon(Icons.add, color: Colors.white),
             ),
       body: Column(
@@ -127,15 +124,11 @@ class _CursoListScreenState extends State<CursoListScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.account_tree, color: Colors.blue),
                                     tooltip: 'Ver paralelos',
-                                    onPressed: () => context.go(  // 🔥
-                                      '/cursos/${c.id}/paralelos',
-                                      /* extra: {
-                                        'curso':     c,
-                                        'periodoId': vm.periodoActivo!.id!,
-                                      }, */
+                                    onPressed: () => context.go('/cursos/${c.id}/paralelos',
+                                  
                                     ),
                                   ),
-                                  // 🔴 Eliminar
+                                  // Eliminar
                                   IconButton(
                                     icon: const Icon(Icons.delete, color: Colors.red),
                                     onPressed: () async {

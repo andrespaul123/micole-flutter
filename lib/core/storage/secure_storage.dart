@@ -43,7 +43,7 @@ class SecureStorage {
       _storage.read(key: 'token'),
       _storage.read(key: 'role'),
       _storage.read(key: 'name'),
-      _storage.read(key: 'email'),  
+      _storage.read(key: 'email'),
     ]);
     return {
       'token': results[0],

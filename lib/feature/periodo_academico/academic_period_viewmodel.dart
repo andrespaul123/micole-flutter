@@ -52,10 +52,7 @@ class AcademicPeriodViewModel extends ChangeNotifier {
     }
   }
 
-  // =========================
   // PERIODO ACTIVO
-  // =========================
-
   Future<void> loadPeriodoActivo() async {
 
     error = null;
@@ -79,10 +76,7 @@ class AcademicPeriodViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // =========================
   // CREAR
-  // =========================
-
   Future<bool> createPeriodo({
     required String nombre,
     required String fechaInicio,
@@ -136,10 +130,7 @@ class AcademicPeriodViewModel extends ChangeNotifier {
     }
   }
 
-  // =========================
   // ACTIVAR
-  // =========================
-
   Future<bool> activarPeriodo(int id) async {
 
     loading = true;
@@ -190,10 +181,7 @@ class AcademicPeriodViewModel extends ChangeNotifier {
     }
   }
 
-  // =========================
   // ELIMINAR
-  // =========================
-
   Future<bool> deletePeriodo(int id) async {
 
     loading = true;

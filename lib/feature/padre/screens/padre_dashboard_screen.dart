@@ -8,13 +8,9 @@ class PadreDashboardScreen extends StatelessWidget {
     super.key,
     required this.estudianteId,
   });
-/* 
-  static const Color primary = Color(0xFF4F46E5); */
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /* backgroundColor: const Color(0xFFF5F7FB), */
       appBar: AppBar(
         title: const Text("Mi hijo"),
         foregroundColor: Colors.black,

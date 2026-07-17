@@ -1,29 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-
 import 'padre_anecdotario.dart';
 import 'padre_anecdotario_repository.dart';
 import '../../core/utils/api_error_handler.dart';
 
-class PadreAnecdotarioViewModel
-    extends ChangeNotifier {
-  final PadreAnecdotarioRepository
-      repository;
+class PadreAnecdotarioViewModel extends ChangeNotifier {
+  final PadreAnecdotarioRepository repository;
 
-  PadreAnecdotarioViewModel({
-    required this.repository,
-  });
+  PadreAnecdotarioViewModel({required this.repository});
 
   bool loading = false;
 
   String? error;
 
-  List<PadreAnecdotario>
-      anecdotarios = [];
+  List<PadreAnecdotario> anecdotarios = [];
 
-  Future<void> loadAnecdotarios(
-    int estudianteId,
-  ) async {
+  Future<void> loadAnecdotarios(int estudianteId) async {
     loading = true;
 
     error = null;
@@ -31,14 +23,9 @@ class PadreAnecdotarioViewModel
     notifyListeners();
 
     try {
-      anecdotarios =
-          await repository
-              .getAnecdotarios(
-        estudianteId,
-      );
+      anecdotarios = await repository.getAnecdotarios(estudianteId);
     } on DioException catch (e) {
-      error =
-          ApiErrorHandler.handle(e);
+      error = ApiErrorHandler.handle(e);
     } catch (_) {
       error = 'Error inesperado';
     } finally {

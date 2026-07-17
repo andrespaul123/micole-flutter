@@ -118,11 +118,7 @@ class _EstudianteCreateScreenState extends State<EstudianteCreateScreen> {
                             );
 
                             context.go('/estudiantes');
-                          } /* else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Error al crear')),
-                            );
-                          } */
+                          } 
                         },
                   child: vm.creating
                       ? const SizedBox(

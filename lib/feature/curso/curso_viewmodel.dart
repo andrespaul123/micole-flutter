@@ -27,10 +27,6 @@ class CursoViewModel extends ChangeNotifier {
     required this.periodoRepository,
   });
 
-  // =========================
-  // LISTAR
-  // =========================
-
   Future<void> loadCursos() async {
 
     loading = true;
@@ -73,10 +69,6 @@ class CursoViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  // =========================
-  // CREAR
-  // =========================
 
   Future<bool> createCurso({
     required String nombre,
@@ -132,10 +124,7 @@ class CursoViewModel extends ChangeNotifier {
     }
   }
 
-  // =========================
   // ELIMINAR
-  // =========================
-
   Future<bool> deleteCurso(int id) async {
 
     if (periodoActivo == null) {

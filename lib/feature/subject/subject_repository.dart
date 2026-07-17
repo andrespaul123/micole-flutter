@@ -7,56 +7,32 @@ class SubjectRepository {
   SubjectRepository(this._dio);
 
   Future<Subject> createSubject(String name) async {
-      final response = await _dio.post(
-        '/subjects',
-        data: {
-          'name': name,
-        },
-      );
+    final response = await _dio.post('/subjects', data: {'name': name});
 
-      return Subject.fromJson(response.data);
+    return Subject.fromJson(response.data);
   }
+
   Future<Subject> getSubjectById(int id) async {
+    final response = await _dio.get('/subjects/$id');
 
-  final response = await _dio.get(
-    '/subjects/$id',
-  );
-
-  return Subject.fromJson(
-    response.data,
-  );
-}
+    return Subject.fromJson(response.data);
+  }
 
   Future<List<Subject>> getSubjects() async {
-      final response = await _dio.get('/subjects');
+    final response = await _dio.get('/subjects');
 
-      print("GET SUBJECTS: ${response.data}");
+    print("GET SUBJECTS: ${response.data}");
 
-      return (response.data as List)
-          .map((e) => Subject.fromJson(e))
-          .toList();
+    return (response.data as List).map((e) => Subject.fromJson(e)).toList();
   }
-  Future<Subject> updateSubject({
-  required int id,
-  required String name,
-}) async {
 
-  final response = await _dio.put(
-    '/subjects/$id',
-    data: {
-      'name': name,
-    },
-  );
+  Future<Subject> updateSubject({required int id, required String name}) async {
+    final response = await _dio.put('/subjects/$id', data: {'name': name});
 
-  return Subject.fromJson(
-    response.data,
-  );
-}
-Future<void> deleteSubject(int id) async {
+    return Subject.fromJson(response.data);
+  }
 
-  await _dio.delete(
-    '/subjects/$id',
-  );
-}
-
+  Future<void> deleteSubject(int id) async {
+    await _dio.delete('/subjects/$id');
+  }
 }

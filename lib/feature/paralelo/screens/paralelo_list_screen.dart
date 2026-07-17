@@ -22,7 +22,7 @@ class _ParaleloListScreenState extends State<ParaleloListScreen> {
     Future.microtask(() async {
       final periodoVM = context.read<AcademicPeriodViewModel>();
 
-      // 🔥 Esperar periodo (CLAVE en web)
+      //  Esperar periodo (CLAVE en web)
       if (periodoVM.periodoActivo == null) {
         await periodoVM.loadPeriodoActivo();
       }
@@ -43,8 +43,15 @@ class _ParaleloListScreenState extends State<ParaleloListScreen> {
     final vm = context.watch<ParaleloViewModel>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Paralelos')),
+      backgroundColor: const Color(0xFFF5F7FB),
+      appBar: AppBar(
+        title: const Text('Paralelos'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+      ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF4F46E5),
         onPressed: () {
           context.go('/cursos/${widget.cursoId}/paralelos/create');
         },
@@ -53,68 +60,167 @@ class _ParaleloListScreenState extends State<ParaleloListScreen> {
 
       body: vm.loading && vm.paralelos.isEmpty
           ? const Center(child: CircularProgressIndicator())
-           : vm.error != null
-        ? Center(
-            child: Text(
-              vm.error!,
-              style: const TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
-          : vm.paralelos.isEmpty
-              ? const Center(child: Text('No hay paralelos'))
-              : ListView.builder(
-                  itemCount: vm.paralelos.length,
-                  itemBuilder: (_, i) {
-                    final p = vm.paralelos[i];
-
-                    return ListTile(
-                      title: Text('Paralelo ${p.nombre}'),
-                      subtitle: Text(p.turno ?? ''),
-
-                      trailing: Row(
+          : vm.error != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: 40,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          vm.error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : vm.paralelos.isEmpty
+                  ? Center(
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // 🔥 VER HORARIO
-                          IconButton(
-                            icon: const Icon(
-                              Icons.calendar_view_week_rounded,
-                              color: Colors.deepPurple,
-                            ),
-                            onPressed: () {
-                              context.go(
-                                '/cursos/${widget.cursoId}/paralelos/${p.id}/horario',
-                              );
-                            },
+                          Icon(
+                            Icons.groups_outlined,
+                            size: 48,
+                            color: Colors.grey.shade400,
                           ),
-
-                          // 🔥 ELIMINAR
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () async {
-                              await vm.deleteParalelo(p.id!);
-
-                              final periodoVM =
-                                  context.read<AcademicPeriodViewModel>();
-
-                              final periodoId =
-                                  periodoVM.periodoActivo?.id;
-
-                              if (periodoId != null) {
-                                await vm.loadParalelosByCurso(
-                                  periodoId,
-                                  widget.cursoId,
-                                );
-                              }
-                            },
+                          const SizedBox(height: 12),
+                          const Text(
+                            'No hay paralelos',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                            ),
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: vm.paralelos.length,
+                      itemBuilder: (_, i) {
+                        final p = vm.paralelos[i];
+
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEEF2FF),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.groups_rounded,
+                                    color: Color(0xFF4F46E5),
+                                    size: 22,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 14),
+
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Paralelo ${p.nombre}',
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      if (p.turno != null &&
+                                          p.turno!.isNotEmpty) ...[
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.schedule,
+                                              size: 14,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              p.turno!,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+
+                                IconButton(
+                                  tooltip: 'Ver horario',
+                                  icon: const Icon(
+                                    Icons.calendar_view_week_rounded,
+                                    color: Color(0xFF4F46E5),
+                                  ),
+                                  onPressed: () {
+                                    context.go(
+                                      '/cursos/${widget.cursoId}/paralelos/${p.id}/horario',
+                                    );
+                                  },
+                                ),
+
+                                // ELIMINAR
+                                IconButton(
+                                  tooltip: 'Eliminar',
+                                  icon: const Icon(
+                                    Icons.delete_outline,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () async {
+                                    await vm.deleteParalelo(p.id!);
+
+                                    final periodoVM = context
+                                        .read<AcademicPeriodViewModel>();
+
+                                    final periodoId =
+                                        periodoVM.periodoActivo?.id;
+
+                                    if (periodoId != null) {
+                                      await vm.loadParalelosByCurso(
+                                        periodoId,
+                                        widget.cursoId,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
     );
   }
 }

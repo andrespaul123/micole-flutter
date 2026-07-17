@@ -38,19 +38,20 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
 
           // ── Contenido ────────────────────────────────────────────────
           Expanded(
-            child: vm.loadingClases
-                ? const Center(child: CircularProgressIndicator())
-                : vm.periodosProfesor.isEmpty
+            child:
+                vm.loadingClases
+                    ? const Center(child: CircularProgressIndicator())
+                    : vm.periodosProfesor.isEmpty
                     ? _empty(
-                        Icons.calendar_today_outlined,
-                        'No hay periodos académicos',
-                      )
+                      Icons.calendar_today_outlined,
+                      'No hay periodos académicos',
+                    )
                     : vm.misClases.isEmpty
-                        ? _empty(
-                            Icons.class_outlined,
-                            'No tienes clases asignadas en este periodo',
-                          )
-                        : _buildClases(vm.misClases),
+                    ? _empty(
+                      Icons.class_outlined,
+                      'No tienes clases asignadas en este periodo',
+                    )
+                    : _buildClases(vm.misClases),
           ),
         ],
       ),
@@ -61,7 +62,9 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
   Widget _buildSelector(AsignacionViewModel vm) {
     if (vm.periodosProfesor.isEmpty) {
       return const SizedBox(
-          height: 48, child: Center(child: LinearProgressIndicator()));
+        height: 48,
+        child: Center(child: LinearProgressIndicator()),
+      );
     }
 
     return Container(
@@ -76,30 +79,34 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
           value: vm.periodoSeleccionadoClases,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),
-          items: vm.periodosProfesor.map((p) {
-            return DropdownMenuItem<AcademicPeriod>(
-              value: p,
-              child: Row(
-                children: [
-                  Text(p.nombre ?? ''),
-                  if (p.activo == true) ...[
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: _purple,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Text('ACTIVO',
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 9)),
-                    ),
-                  ],
-                ],
-              ),
-            );
-          }).toList(),
+          items:
+              vm.periodosProfesor.map((p) {
+                return DropdownMenuItem<AcademicPeriod>(
+                  value: p,
+                  child: Row(
+                    children: [
+                      Text(p.nombre ?? ''),
+                      if (p.activo == true) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _purple,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'ACTIVO',
+                            style: TextStyle(color: Colors.white, fontSize: 9),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              }).toList(),
           onChanged: (p) {
             if (p != null) vm.cambiarPeriodoClases(p);
           },
@@ -144,8 +151,7 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
   Widget _buildCard(String titulo, List<MiClase> materias) {
     return Card(
       elevation: 3,
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,8 +159,7 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
           // Header azul
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             color: _purple,
             child: Text(
               titulo,
@@ -171,8 +176,7 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(vertical: 4),
               itemCount: materias.length,
-              separatorBuilder: (_, __) =>
-                  const Divider(height: 1, indent: 16),
+              separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
               itemBuilder: (context, i) {
                 final m = materias[i];
                 return ListTile(
@@ -190,24 +194,26 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
                       backgroundColor: _purple,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 6),
+                        horizontal: 14,
+                        vertical: 6,
+                      ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () {
-  final vm = context.read<AsignacionViewModel>();
+                      final vm = context.read<AsignacionViewModel>();
 
-  context.go(
- '/mis-clases/${vm.periodoSeleccionadoClases!.id}/${m.cursoId}/${m.paraleloId}/${m.id}'
- '?curso=${Uri.encodeComponent(m.curso ?? '')}'
- '&paralelo=${Uri.encodeComponent(m.paralelo ?? '')}'
- '&materia=${Uri.encodeComponent(m.materia ?? '')}',
-);
-},
-                    child: const Text('Entrar',
-                        style: TextStyle(fontSize: 13)),
+                      context.go(
+                        '/mis-clases/${vm.periodoSeleccionadoClases!.id}/${m.cursoId}/${m.paraleloId}/${m.id}'
+                        '?curso=${Uri.encodeComponent(m.curso ?? '')}'
+                        '&paralelo=${Uri.encodeComponent(m.paralelo ?? '')}'
+                        '&materia=${Uri.encodeComponent(m.materia ?? '')}',
+                      );
+                    },
+                    child: const Text('Entrar', style: TextStyle(fontSize: 13)),
                   ),
                 );
               },
@@ -225,9 +231,11 @@ class _MisClasesScreenState extends State<MisClasesScreen> {
         children: [
           Icon(icon, size: 64, color: Colors.grey[350]),
           const SizedBox(height: 16),
-          Text(msg,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey, fontSize: 15)),
+          Text(
+            msg,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.grey, fontSize: 15),
+          ),
         ],
       ),
     );

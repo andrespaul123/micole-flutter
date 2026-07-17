@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/widgest/auth_card.dart';
 import '../../../core/widgest/auth_input.dart';
 import '../padre_familia_viewmodel.dart';

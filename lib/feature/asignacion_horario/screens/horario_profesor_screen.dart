@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../profesor/profesor.dart';
 import '../asignacion.dart';
 import '../asignacion_viewmodel.dart';
 
@@ -116,7 +115,7 @@ class _HorarioProfesorScreenState extends State<HorarioProfesorScreen> {
   }
 }
 
-// ── Tarjeta por día ───────────────────────────────────────────────────────────
+// ── Tarjeta por día
 class _DiaCard extends StatelessWidget {
   final String dia;
   final List<Asignacion> clases;
@@ -206,7 +205,7 @@ class _DiaCard extends StatelessWidget {
   }
 }
 
-// ── Fila de cada clase ────────────────────────────────────────────────────────
+// ── Fila de cada clase 
 class _ClaseRow extends StatelessWidget {
   final Asignacion clase;
   final Color accentColor;

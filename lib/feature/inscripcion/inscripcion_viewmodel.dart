@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-
 import 'inscripcion.dart';
 import '../periodo_academico/academic_period.dart';
-
 import 'inscripcion_repository.dart';
 import '../periodo_academico/academic_period_repository.dart';
-
 import '../../core/utils/api_error_handler.dart';
 
 class InscripcionViewModel extends ChangeNotifier {
@@ -31,10 +28,7 @@ class InscripcionViewModel extends ChangeNotifier {
     required this.periodoRepository,
   });
 
-  // =========================
   // CARGAR PERIODOS
-  // =========================
-
   Future<void> loadPeriodos() async {
 
     loading = true;
@@ -82,10 +76,7 @@ class InscripcionViewModel extends ChangeNotifier {
     }
   }
 
-  // =========================
   // CAMBIAR PERIODO
-  // =========================
-
   Future<void> cambiarPeriodo(
     AcademicPeriod periodo,
   ) async {
@@ -99,10 +90,7 @@ class InscripcionViewModel extends ChangeNotifier {
     await _cargarInscripciones();
   }
 
-  // =========================
   // CARGAR INSCRIPCIONES
-  // =========================
-
   Future<void> _cargarInscripciones() async {
 
     if (periodoSeleccionado?.id == null) {
@@ -137,11 +125,7 @@ class InscripcionViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  // =========================
   // CREAR
-  // =========================
-
   Future<bool> createInscripcion({
     required int periodoId,
     required int estudianteId,
@@ -191,10 +175,7 @@ class InscripcionViewModel extends ChangeNotifier {
     }
   }
 
-  // =========================
   // ELIMINAR
-  // =========================
-
   Future<bool> deleteInscripcion(
     int id,
   ) async {

@@ -24,7 +24,6 @@ class _PadreListScreenState extends State<PadreListScreen> {
     final vm = context.watch<PadreFamiliaViewModel>();
 
     return Scaffold(
-      // 🔥 FAB con go() (URL SI cambia)
       floatingActionButton: FloatingActionButton(
         onPressed: () {context.go('/padres/create'); },
         child: const Icon(Icons.add),

@@ -7,9 +7,7 @@ class PadreNotaRepository {
   PadreNotaRepository(this._dio);
 
   Future<List<PeriodoNota>> getBoleta(int estudianteId) async {
-    final response = await _dio.get(
-      '/padre/mis-hijos/$estudianteId/notas',
-    );
+    final response = await _dio.get('/padre/mis-hijos/$estudianteId/notas');
 
     final List periodos = response.data['periodos'];
 

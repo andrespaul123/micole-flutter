@@ -25,9 +25,7 @@ class PadreAnecdotario {
       titulo: json['titulo'],
       descripcion: json['descripcion'],
       fecha: json['fecha'],
-
       profesor: json['profesor']?['user']?['name'],
-
       materia: json['asignacion_docente']?['subject']?['name'],
     );
   }

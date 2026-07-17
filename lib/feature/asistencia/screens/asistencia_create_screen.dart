@@ -118,7 +118,7 @@ class _AsistenciaCreateScreenState
                   ),
                 ),
 
-                // 🔥 ERROR BACKEND
+               
                 if (vm.error != null) ...[
                   Padding(
                     padding:

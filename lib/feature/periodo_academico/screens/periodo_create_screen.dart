@@ -124,16 +124,16 @@ class _PeriodoCreateScreenState extends State<PeriodoCreateScreen> {
                     ],
                   ),
                   if (vm.error != null) ...[
-  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-  Text(
-    vm.error!,
-    style: const TextStyle(
-      color: Colors.red,
-      fontWeight: FontWeight.w600,
-    ),
-  ),
-],
+                    Text(
+                      vm.error!,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 24),
 
                   SizedBox(

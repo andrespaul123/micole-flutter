@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../anecdotario_viewmodel.dart';
 
 class AnecdotarioListScreen extends StatefulWidget {

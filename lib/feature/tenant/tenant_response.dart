@@ -7,9 +7,7 @@ class TenantResponse {
 
   factory TenantResponse.fromJson(Map<String, dynamic> json) {
     return TenantResponse(
-      tenant: json['tenant'] != null
-          ? Tenant.fromJson(json['tenant'])
-          : null,
+      tenant: json['tenant'] != null ? Tenant.fromJson(json['tenant']) : null,
     );
   }
 }

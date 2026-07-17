@@ -8,10 +8,7 @@ class InscripcionRepository {
 
   InscripcionRepository(this._dio);
 
-  // =========================
   // LISTAR INSCRIPCIONES
-  // =========================
-
   Future<List<Inscripcion>> getInscripciones(
     int periodoId,
   ) async {
@@ -29,10 +26,7 @@ class InscripcionRepository {
         .toList();
   }
 
-  // =========================
   // CREAR
-  // =========================
-
   Future<Inscripcion> createInscripcion({
     required int periodoId,
     required int estudianteId,
@@ -51,10 +45,7 @@ class InscripcionRepository {
     return Inscripcion.fromJson(response.data);
   }
 
-  // =========================
   // ELIMINAR
-  // =========================
-
   Future<void> deleteInscripcion(
     int periodoId,
     int id,
@@ -64,10 +55,7 @@ class InscripcionRepository {
     );
   }
 
-  // =========================
   // ESTUDIANTES POR CLASE
-  // =========================
-
   Future<List<EstudianteClase>>
       getEstudiantesPorClase({
     required int periodoId,

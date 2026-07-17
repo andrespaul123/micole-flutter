@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../paralelo_viewmodel.dart';
 import '../../../core/widgest/auth_card.dart';
 import '../../../core/widgest/auth_input.dart';
@@ -101,17 +100,16 @@ class _ParaleloCreateScreenState extends State<ParaleloCreateScreen> {
                             validator: (_) => null,
                           ),
                           if (vm.error != null) ...[
-  const SizedBox(height: 10),
+                                  const SizedBox(height: 10),
 
-  Text(
-    vm.error!,
-    style: const TextStyle(
-      color: Colors.red,
-      fontWeight: FontWeight.w600,
-    ),
-  ),
-],
-
+                                  Text(
+                                    vm.error!,
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                           const SizedBox(height: 20),
 
                           SizedBox(
@@ -148,8 +146,6 @@ class _ParaleloCreateScreenState extends State<ParaleloCreateScreen> {
                                       ),
                                     ),
                                   );
-
-                                  // 🔥 solo navegar, la lista ya se actualiza con add()
                                   context.go(
                                     '/cursos/${widget.cursoId}/paralelos',
                                   );

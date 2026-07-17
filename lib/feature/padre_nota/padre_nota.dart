@@ -12,7 +12,8 @@ class PeriodoNota {
   factory PeriodoNota.fromJson(Map<String, dynamic> json) {
     return PeriodoNota(
       periodo: json['periodo'] ?? '',
-      materias: (json['materias'] as List?)
+      materias:
+          (json['materias'] as List?)
               ?.map((e) => MateriaNota.fromJson(e))
               .toList() ??
           [],
@@ -25,10 +26,7 @@ class MateriaNota {
   final String materia;
   final double promedio;
 
-  MateriaNota({
-    required this.materia,
-    required this.promedio,
-  });
+  MateriaNota({required this.materia, required this.promedio});
 
   factory MateriaNota.fromJson(Map<String, dynamic> json) {
     return MateriaNota(

@@ -5,13 +5,7 @@ class Tenant {
   final String? logo;
   final String? logoUrl;
 
-  Tenant({
-    this.id,
-    this.name,
-    this.slug,
-    this.logo,
-    this.logoUrl,
-  });
+  Tenant({this.id, this.name, this.slug, this.logo, this.logoUrl});
 
   factory Tenant.fromJson(Map<String, dynamic> json) {
     return Tenant(

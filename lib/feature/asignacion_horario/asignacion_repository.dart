@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'asignacion.dart';
 import '../estudiante/estudiante_horario/horario_curso.dart';
 import 'mi_clase.dart';
+import 'asignacion_docente.dart';
 
 class AsignacionRepository {
   final Dio _dio;
@@ -49,31 +50,6 @@ class AsignacionRepository {
       return MapEntry(dia, items);
     });
   }
-
- /*  Future<void> crearAsignacion({
-    required int periodoId,
-    required int profesorId,
-    required int subjectId,
-    required int cursoId,
-    required int paraleloId,
-    required String dia,
-    required String horaInicio,
-    required String horaFin,
-  }) async {
-    await _dio.post(
-      '/periodos/$periodoId/asignaciones',
-      data: {
-        'profesor_id': profesorId,
-        'subject_id': subjectId,
-        'curso_id': cursoId,
-        'paralelo_id': paraleloId,
-        'dia': dia,
-        'hora_inicio': horaInicio,
-        'hora_fin': horaFin,
-      },
-    );
-  }
- */
   
   Future<void> crearAsignacion({
   required int periodoId,
@@ -116,4 +92,42 @@ class AsignacionRepository {
         .map((e) => MiClase.fromJson(e))
         .toList();
   }
+
+  Future<List<AsignacionDocente>> getAsignacionesProfesor({
+  required int periodoId,
+  required int profesorId,
+}) async {
+  final response = await _dio.get(
+    '/periodos/$periodoId/asignaciones',
+    queryParameters: {
+      'profesor_id': profesorId,
+    },
+  );
+
+  final List data = response.data as List;
+
+  return data
+      .map(
+        (e) => AsignacionDocente.fromJson(
+          e as Map<String, dynamic>,
+        ),
+      )
+      .toList();
+}
+
+Future<void> agregarHorario({
+  required int asignacionId,
+  required String dia,
+  required String horaInicio,
+  required String horaFin,
+}) async {
+  await _dio.post(
+    '/asignaciones/$asignacionId/horarios',
+    data: {
+      'dia': dia,
+      'hora_inicio': horaInicio,
+      'hora_fin': horaFin,
+    },
+  );
+}
 }

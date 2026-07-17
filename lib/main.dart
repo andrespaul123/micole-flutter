@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:front_colegio/feature/estudiante/estudiante_agenda/entrega_tarea/entrega_tarea_repository.dart';
-import 'package:front_colegio/feature/estudiante/estudiante_agenda/entrega_tarea/entrega_tarea_viewmodel.dart';
+import 'feature/estudiante/estudiante_agenda/entrega_tarea/entrega_tarea_repository.dart';
+import 'feature/estudiante/estudiante_agenda/entrega_tarea/entrega_tarea_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'core/router/app_router.dart';
 import 'core/dio/dio_client.dart';
-
 // Repositories
 import 'feature/login/auth_repository.dart';
 import 'feature/login/auth_viewmodel.dart';
@@ -59,7 +58,7 @@ import 'feature/padre_anecdotario/padre_anecdotario_repository.dart';
 import 'feature/padre_anecdotario/padre_anecdotario_viewmodel.dart';
 import 'feature/padre_nota/padre_nota_repository.dart';
 import 'feature/padre_nota/padre_nota_viewmodel.dart';
-import  'feature/estudiante/estudiantes_clase_viewmodel.dart';
+import 'feature/estudiante/estudiantes_clase_viewmodel.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() async {
@@ -88,11 +87,7 @@ void main() async {
 
         // Curso
         ChangeNotifierProvider(
-          create:
-              (_) => CursoViewModel(
-                repository: CursoRepository(dio),
-                periodoRepository: AcademicPeriodRepository(dio),
-              ),
+          create:(_) => CursoViewModel(repository: CursoRepository(dio),periodoRepository: AcademicPeriodRepository(dio),),
         ),
 
         // Paralelo
@@ -107,36 +102,26 @@ void main() async {
 
         //  Estudiante
         ChangeNotifierProvider(
-          create:
-              (_) => EstudianteViewModel(repository: EstudianteRepository(dio)),
+          create:(_) => EstudianteViewModel(repository: EstudianteRepository(dio)),
         ),
 
         //  Padre de familia
         ChangeNotifierProvider(
-          create:
-              (_) => PadreFamiliaViewModel(
-                repository: PadreFamiliaRepository(dio),
-              ),
+          create:(_) => PadreFamiliaViewModel(repository: PadreFamiliaRepository(dio)),
         ),
 
         // Periodo académico
         ChangeNotifierProvider(
-          create:
-              (_) => AcademicPeriodViewModel(
-                repository: AcademicPeriodRepository(dio),
+          create:(_) => AcademicPeriodViewModel(repository: AcademicPeriodRepository(dio),
               )..loadPeriodoActivo(),
         ),
         ChangeNotifierProvider(
-          create:
-              (_) => PeriodoEvaluacionViewModel(
-                repository: PeriodoEvaluacionRepository(dio),
-              ),
+          create:(_) => PeriodoEvaluacionViewModel(repository: PeriodoEvaluacionRepository(dio),),
         ),
+        
         // Asignación
         ChangeNotifierProvider(
-          create:
-              (_) => AsignacionViewModel(
-                repository: AsignacionRepository(dio),
+          create:(_) => AsignacionViewModel(repository: AsignacionRepository(dio),
                 periodoRepository: AcademicPeriodRepository(dio),
               ),
         ),
@@ -145,26 +130,19 @@ void main() async {
           create: (_) => CircularViewModel(repository: CircularRepository(dio)),
         ),
         ChangeNotifierProvider(
-          create:
-              (_) => InscripcionViewModel(
-                repository: InscripcionRepository(dio),
+          create:(_) => InscripcionViewModel(repository: InscripcionRepository(dio),
                 periodoRepository: AcademicPeriodRepository(dio),
               ),
         ),
         ChangeNotifierProvider(
-          create:
-              (_) => EstudiantesClaseViewModel(
-                repository: InscripcionRepository(dio),
-              ),
+          create:(_) => EstudiantesClaseViewModel(repository: InscripcionRepository(dio),),
         ),
+
         ChangeNotifierProvider(
-          create:
-              (_) =>
-                  AnecdotarioViewModel(repository: AnecdotarioRepository(dio)),
-        ),
+          create:(_) =>AnecdotarioViewModel(repository: AnecdotarioRepository(dio)),),
+
         ChangeNotifierProvider(
-          create:
-              (_) => AsistenciaViewModel(repository: AsistenciaRepository(dio)),
+          create:(_) => AsistenciaViewModel(repository: AsistenciaRepository(dio)),
         ),
         ChangeNotifierProvider(
           create: (_) => AgendaViewModel(repository: AgendaRepository(dio)),
@@ -176,53 +154,31 @@ void main() async {
           create: (_) => CriterioViewModel(repository: CriterioRepository(dio)),
         ),
         ChangeNotifierProvider(
-          create:
-              (_) => LibroCalificacionesViewModel(
-                repository: LibroCalificacionesRepository(dio),
-              ),
+          create:(_) => LibroCalificacionesViewModel(repository: LibroCalificacionesRepository(dio),),
         ),
         ChangeNotifierProvider(
-          create:
-              (_) =>
-                  PadreAgendaViewModel(repository: PadreAgendaRepository(dio)),
+          create:(_) =>PadreAgendaViewModel(repository: PadreAgendaRepository(dio)),),
+        ChangeNotifierProvider(
+          create:(_) => PadreAsistenciaViewModel(repository: PadreAsistenciaRepository(dio),),
         ),
         ChangeNotifierProvider(
-          create:
-              (_) => PadreAsistenciaViewModel(
-                repository: PadreAsistenciaRepository(dio),
-              ),
+          create:(_) => PadreAnecdotarioViewModel(repository: PadreAnecdotarioRepository(dio),),
         ),
         ChangeNotifierProvider(
-          create:
-              (_) => PadreAnecdotarioViewModel(
-                repository: PadreAnecdotarioRepository(dio),
-              ),
+          create:(_) => EstudianteHorarioViewModel(repository: EstudianteHorarioRepository(dio),),
         ),
         ChangeNotifierProvider(
-  create: (_) => EstudianteHorarioViewModel(
-    repository: EstudianteHorarioRepository(dio),
-  ),
-),
-ChangeNotifierProvider(
-  create: (_) =>
-      EstudianteMateriaViewModel(
-    repository:
-        EstudianteMateriaRepository(
-      dio,
-    ),
-  ),
-),
-        ChangeNotifierProvider(
-          create:
-              (_) => PadreNotaViewModel(repository: PadreNotaRepository(dio)),
+          create:(_) => EstudianteMateriaViewModel(repository: EstudianteMateriaRepository(dio),),
         ),
-        ChangeNotifierProvider(create: 
-        (_) => EstudianteAgendaViewModel(repository: EstudianteAgendaRepository(dio))),
-ChangeNotifierProvider(
-  create: (_) => EntregaTareaViewModel(
-    repository: EntregaTareaRepository(dio),
-  ),
-),
+        ChangeNotifierProvider(
+          create:(_) => PadreNotaViewModel(repository: PadreNotaRepository(dio)),
+        ),
+        ChangeNotifierProvider(
+          create:(_) => EstudianteAgendaViewModel(repository: EstudianteAgendaRepository(dio),),
+        ),
+        ChangeNotifierProvider(
+          create:(_) => EntregaTareaViewModel(repository: EntregaTareaRepository(dio),),
+        ),
       ],
       child: MyApp(router: router),
     ),

@@ -1,5 +1,3 @@
-// screen/estudiante/estudiante_horario_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../horario_curso.dart';

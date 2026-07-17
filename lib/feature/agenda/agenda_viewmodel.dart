@@ -3,9 +3,10 @@
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-
-import 'agenda.dart';
 import 'agenda_repository.dart';
+import 'agenda.dart';
+import 'entrega_estudiante.dart';
+import 'entrega_detalle_profesor.dart';
 
 class AgendaViewModel extends ChangeNotifier {
   final AgendaRepository repository;
@@ -18,8 +19,13 @@ class AgendaViewModel extends ChangeNotifier {
   bool creating = false;
   bool uploading = false;
   bool replacing = false;
-
+bool loadingDetalleEntrega = false;
+String? errorDetalleEntrega;
+EntregaDetalleProfesor? detalleEntrega;
   String? error;
+  bool loadingEntregas = false;
+  String? errorEntregas;
+  EntregasResponse? entregasResponse;
 
   List<Agenda> agendas = [];
 
@@ -311,4 +317,49 @@ class AgendaViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  // ENTREGAS
+  // ==========================================
+  Future<void> loadEntregas(
+    int agendaId,
+  ) async {
+    loadingEntregas = true;
+
+    errorEntregas = null;
+
+    notifyListeners();
+
+    try {
+      entregasResponse = await repository.getEntregas(agendaId);
+    } on DioException catch (e) {
+      errorEntregas = e.response?.data['message'] ?? 'Error al cargar entregas';
+    } catch (_) {
+      errorEntregas = 'Error inesperado';
+    }
+
+    loadingEntregas = false;
+
+    notifyListeners();
+  }
+  Future<void> loadDetalleEntrega(
+  int entregaId,
+) async {
+  loadingDetalleEntrega = true;
+
+  errorDetalleEntrega = null;
+
+  notifyListeners();
+
+  try {
+    detalleEntrega = await repository.getDetalleEntrega(entregaId);
+  } on DioException catch (e) {
+    errorDetalleEntrega =
+        e.response?.data['message'] ?? 'Error al cargar la entrega';
+  } catch (_) {
+    errorDetalleEntrega = 'Error inesperado';
+  }
+
+  loadingDetalleEntrega = false;
+
+  notifyListeners();
+}
 }

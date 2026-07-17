@@ -178,6 +178,9 @@ class _AgendaListScreenState
                         final agenda =
                             vm.agendas[i];
 
+                        final tieneEntregas =
+                            agenda.tipo != 'recurso';
+
                         return Card(
                           margin:
                               const EdgeInsets
@@ -239,20 +242,46 @@ class _AgendaListScreenState
                               ],
                             ),
 
-                            trailing:
+                            trailing: Row(
+                              mainAxisSize:
+                                  MainAxisSize.min,
+
+                              children: [
+
+                                if (tieneEntregas)
+                                  IconButton(
+                                    tooltip:
+                                        'Ver entregas',
+
+                                    icon: const Icon(
+                                      Icons.fact_check,
+                                      color:
+                                          Colors.deepPurple,
+                                    ),
+
+                                    onPressed: () {
+
+                                      context.go(
+                                        '/agendas/${agenda.id}/entregas',
+                                      );
+                                    },
+                                  ),
+
                                 IconButton(
 
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                              ),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
 
-                              onPressed: () {
+                                  onPressed: () {
 
-                                eliminarAgenda(
-                                  agenda.id!,
-                                );
-                              },
+                                    eliminarAgenda(
+                                      agenda.id!,
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         );

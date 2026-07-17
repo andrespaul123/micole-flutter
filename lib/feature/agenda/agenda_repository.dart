@@ -2,7 +2,8 @@
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
-
+import 'package:front_colegio/feature/agenda/entrega_detalle_profesor.dart';
+import 'entrega_estudiante.dart';
 import 'agenda.dart';
 
 class AgendaRepository {
@@ -27,7 +28,7 @@ class AgendaRepository {
     int id,
   ) async {
     final response = await _dio.get(
-      '/agenda/$id',
+'/agenda/$id',
     );
 
     return Agenda.fromJson(
@@ -133,4 +134,25 @@ class AgendaRepository {
       data: formData,
     );
   }
+  // ==========================================
+  // ENTREGAS (ver quién entregó una tarea/examen)
+  // ==========================================
+  Future<EntregasResponse> getEntregas(
+    int agendaId,
+  ) async {
+    final response = await _dio.get(
+      '/agenda/$agendaId/entregas',
+    );
+
+    return EntregasResponse.fromJson(response.data);
+  }
+  Future<EntregaDetalleProfesor> getDetalleEntrega(
+  int entregaId,
+) async {
+  final response = await _dio.get(
+    '/entregas/$entregaId',
+  );
+
+  return EntregaDetalleProfesor.fromJson(response.data);
+}
 }

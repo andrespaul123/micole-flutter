@@ -107,13 +107,12 @@ class _PadreCreateScreenState extends State<PadreCreateScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        // 🔥 USAMOS creating
                         onPressed: vm.creating
                             ? null
                             : () async {
                                 if (!_formKey.currentState!.validate()) return;
 
-                                FocusScope.of(context).unfocus(); // UX
+                                FocusScope.of(context).unfocus(); 
 
                                 final success = await vm.createPadre(
                                   name: nameController.text.trim(),
@@ -142,17 +141,8 @@ class _PadreCreateScreenState extends State<PadreCreateScreen> {
                                   );
 
                                   context.go('/padres');
-                                } /* else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Error al crear'),
-                                    ),
-                                  );
-                                } */
+                                } 
                               },
-
-                        // 🔥 LOADER SOLO EN BOTÓN
                         child: vm.creating
                             ? const SizedBox(
                                 height: 18,
