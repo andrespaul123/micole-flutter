@@ -10,7 +10,7 @@ class AgendaArchivo {
   });
 
   factory AgendaArchivo.fromJson(Map<String, dynamic> json) {
-    const baseUrl = 'http://192.168.100.206:8000';
+    const baseUrl = 'http://192.168.137.204:8000';
     final rawUrl = json['url'] ?? '';
     final fullUrl = rawUrl.startsWith('http') ? rawUrl : '$baseUrl$rawUrl';
 
